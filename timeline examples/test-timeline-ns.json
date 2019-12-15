@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "My first timeline"
+  },
+  "events": [
+    {
+      "name": "Event1",
+      "startNs": 1000000000,
+      "endNs": 2000000000
+    },
+    {
+      "name": "Event2",
+      "startNs": 500000000,
+      "endNs": 2500000000
+    },
+    {
+      "name": "Event3",
+      "startNs": 1000000000,
+      "endNs": 1500000000
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+#container {
+    max-width: 1000px;
+    margin: 1em auto;
+}
+
+.timeline-container {
+    margin-top: 50pt;
+    margin-bottom: 50pt;
+}
+
+#drop-timeline-area {
+    position: relative;
+    border: 3px dashed #ccc;
+    border-radius: 20px;
+    width: 30%;
+    margin: 0px auto;
+    margin-top: 50pt;
+}
+
+#drop-timeline-bottom-margin {
+    height: 50pt;
+}
+
+#drop-timeline-area:hover {
+    background: #ccc;
+}
+
+#drop-timeline-area.highlight {
+    background: #ccc;
+    border-color: purple;
+}
+
+#drop-timeline-hint {
+    color: #aaa;
+    font-size: 18pt;
+    font-weight: bold;
+    text-align: center;
+    margin: 30pt;
+}
+
+#file-input {
+    display: none;
+}
+
+#file-input-click-area {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
