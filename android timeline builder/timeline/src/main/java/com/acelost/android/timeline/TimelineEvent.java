@@ -57,9 +57,8 @@ public class TimelineEvent {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (units != null ? units.hashCode() : 0);
-        result = 31 * result + (int) (start ^ (start >>> 32));
-        result = 31 * result + (int) (end ^ (end >>> 32));
+        result = 31 * result + (int) (getStartMillis() ^ (getStartMillis() >>> 32));
+        result = 31 * result + (int) (getEndMillis() ^ (getEndMillis() >>> 32));
         return result;
     }
 

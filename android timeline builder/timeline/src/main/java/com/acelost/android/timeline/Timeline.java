@@ -14,10 +14,16 @@ import static com.acelost.android.timeline.Preconditions.checkNotNull;
 public class Timeline {
 
     private final String title;
+    private final TimelineKind kind;
     private final Set<TimelineEvent> events;
 
     public Timeline(@NonNull final String title) {
+        this(title, TimelineKind.ABSOLUTE);
+    }
+
+    public Timeline(@NonNull final String title, @NonNull final TimelineKind kind) {
         this.title = checkNotEmpty(title);
+        this.kind = checkNotNull(kind);
         this.events = new CopyOnWriteArraySet<>();
     }
 
@@ -29,6 +35,11 @@ public class Timeline {
     @NonNull
     public String getTitle() {
         return title;
+    }
+
+    @NonNull
+    public TimelineKind getKind() {
+        return kind;
     }
 
     @NonNull

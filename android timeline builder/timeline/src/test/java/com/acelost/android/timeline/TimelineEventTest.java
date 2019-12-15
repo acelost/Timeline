@@ -68,4 +68,16 @@ public class TimelineEventTest {
         assertEquals(event1, event2);
     }
 
+    @Test
+    public void assert_hashCodeIndependentOfUnits() {
+        final long startSeconds = 1;
+        final long endSeconds = 5;
+        final long startMillis = startSeconds * MILLIS_IN_SECOND;
+        final long endMillis = endSeconds * MILLIS_IN_SECOND;
+        final TimelineEvent event1 = new TimelineEvent("e", TimeUnit.SECONDS, startSeconds, endSeconds);
+        final TimelineEvent event2 = new TimelineEvent("e", TimeUnit.MILLISECONDS, startMillis, endMillis);
+
+        assertEquals(event1.hashCode(), event2.hashCode());
+    }
+
 }

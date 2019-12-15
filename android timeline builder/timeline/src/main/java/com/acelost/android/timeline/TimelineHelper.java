@@ -30,6 +30,7 @@ public class TimelineHelper {
         checkNotNull(timeline);
         final JSONObject metaJson = new JSONObject();
         putSafe(metaJson, "title", timeline.getTitle());
+        putSafe(metaJson, "kind", timeline.getKind().name());
         final JSONArray eventsJson = new JSONArray();
         for (TimelineEvent event : timeline.getEvents()) {
             final JSONObject eventJson = new JSONObject();
