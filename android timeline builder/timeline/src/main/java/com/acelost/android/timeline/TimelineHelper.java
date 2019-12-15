@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +76,7 @@ public class TimelineHelper {
         checkNotNull(timeline);
         final File directory = checkNotNull(context.getExternalCacheDir());
         final File file = toTempFile(timeline, filePrefix, ".json", directory);
-        final Uri uri = Uri.fromFile(file);
+        final Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
 
         final Intent dataIntent = new Intent(Intent.ACTION_SEND);
         dataIntent.setType("text/*");
