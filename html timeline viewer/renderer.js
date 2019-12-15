@@ -17,6 +17,23 @@ const FIELD_NAME = 'name';
 const FIELD_START = 'start';
 const FIELD_END = 'end';
 
+const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
+const TIMELINE_KIND_RELATIVE = "RELATIVE";
+
+const CHART_FRAME_HEIGHT_PERCENTAGE = 7;
+const CHART_ROW_HEIGHT_PERCENTAGE = 1.5;
+
+Highcharts.SVGRenderer.prototype.symbols.cross = function (x, y, w, h) {
+    var path = [
+        // Cross
+        'M', x + 0.1 * w, y + 0.1 * h,
+        'L', x + 0.9 * w, y + 0.9 * h,
+        'M', x + 0.9 * w, y + 0.1 * h,
+        'L', x + 0.1 * w, y + 0.9 * h
+    ];
+    return path;
+};
+
 document.addEventListener('NewTimeline', function (event) {
     let timelineJson = event.detail;
     handleTimeline(timelineJson);
@@ -26,14 +43,18 @@ function handleTimeline(timelineJson) {
     let meta = timelineJson['meta'];
     let filename = timelineJson.filename;
     let title = meta['title'];
+    let kind = meta['kind'];
     let events = parseEvents(timelineJson['events']);
+    if (kind == TIMELINE_KIND_RELATIVE) {
+        convertToRelative(events);
+    }
     let sequences = prepareOrderedSequences(events);
     let eventNames = [];
     let eventDatas = [];
     for (var i = 0; i < sequences.length; i++) {
         let sequence = sequences[i];
+        var eventName = undefined;
         for (var event of sequence) {
-            let name = event[FIELD_NAME];
             let start = event[FIELD_START];
             let end = event[FIELD_END];
             let data = {
@@ -41,11 +62,14 @@ function handleTimeline(timelineJson) {
                 x2: end,
                 y: i
             };
-            eventNames.push(name);
+            if (!eventName) {
+                eventName = event[FIELD_NAME];
+            }
             eventDatas.push(data);
         }
+        eventNames.push(eventName);
     }
-    renderTimeline(filename, title, eventNames, eventDatas);
+    renderTimeline(filename, title, sequences.length, eventNames, eventDatas);
 }
 
 function parseEvents(rawEvents) {
@@ -102,6 +126,22 @@ function convertToMs(value, units) {
     throw Error("В парсере не указаны единицы измерения.")
 }
 
+function convertToRelative(events) {
+    if (events.length > 0) {
+        var min = Number.MAX_SAFE_INTEGER;
+        for (var event of events) {
+            let less = Math.min(event[FIELD_START], event[FIELD_END]);
+            if (less < min) {
+                min = less;
+            }
+        }
+        for (var event of events) {
+            event[FIELD_START] -= min;
+            event[FIELD_END] -= min;
+        }
+    }
+}
+
 function prepareOrderedSequences(events) {
     events.sort(eventComparator); // To guaratee asc order of events in sequence
     let map = new Map();
@@ -140,21 +180,38 @@ function formatTooltip() {
     return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + point.yCategory + '</b> ' + duration + ' ms<br/>';
 }
 
-function renderTimeline(filename, title, eventNames, eventDatas) {
+function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) {
     let timelineId = filename;
     let timelineContainer = findTimelineContainer(timelineId);
+    let ratio = CHART_FRAME_HEIGHT_PERCENTAGE + CHART_ROW_HEIGHT_PERCENTAGE * sequenceCount + '%';
     Highcharts.chart(timelineId, {
         chart: {
-            type: 'xrange'
+            type: 'xrange',
+            height: ratio
+        },
+        legend: {
+            itemStyle: {
+                fontSize: '15px'
+            }
         },
         xAxis: {
             type: 'datetime',
+            labels: {
+                style: {
+                    fontSize: '14px'
+                }
+            },
             dateTimeLabelFormats: {
-                millisecond: '%M:%S.%L'
+                millisecond: '%M:%S.%L',
+                day: '' // to prevent 1 Jan tick
             }
         },
         title: {
-            text: title
+            text: title,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '28px'
+            }
         },
         tooltip: {
             formatter: formatTooltip
@@ -162,6 +219,11 @@ function renderTimeline(filename, title, eventNames, eventDatas) {
         yAxis: {
             title: {
                 text: ''
+            },
+            labels: {
+                style: {
+                    fontSize: '15px'
+                }
             },
             categories: eventNames,
             reversed: true
@@ -171,16 +233,30 @@ function renderTimeline(filename, title, eventNames, eventDatas) {
             borderColor: 'gray',
             pointWidth: 20,
             data: eventDatas,
+            turboThreshold: eventDatas.length + 1,
             dataLabels: {
                 enabled: true
             }
-        }]
-    
+        }],
+        exporting: {
+            buttons: {
+                deleteButton: {
+                    symbol: 'cross',
+                    onclick: function () {
+                        findTimilineList().removeChild(timelineContainer);
+                    }
+                }
+            }
+        }
     });
 }
 
+function findTimilineList() {
+    return document.getElementById('timeline-list');
+}
+
 function findTimelineContainer(timelineId) {
-    let timelineList = document.getElementById('timeline-list');
+    let timelineList = findTimilineList();
     var reusedContainer = undefined;
     let nodes = timelineList.childNodes;
     for (var i = 0; i < nodes.length; i++) {
