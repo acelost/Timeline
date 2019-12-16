@@ -41,7 +41,7 @@
 
 Resulting timeline looks so:
 
-<img src="example.png" width="760">
+<img src="timeline-example.png" width="760">
 
 ## How to use
 
