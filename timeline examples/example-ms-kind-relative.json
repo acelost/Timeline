@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "title": "Timeline Example 1",
+    "kind": "RELATIVE"
+  },
+  "events": [
+    {
+      "name": "Event #1",
+      "start": 50,
+      "end": 100
+    },{
+      "name": "Event #2",
+      "start": 100,
+      "end": 250
+    },{
+      "name": "Event #3",
+      "start": 200,
+      "end": 300
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "title": "Timeline Example 1",
+    "nameKey": "eventName",
+    "startKey": "startMs",
+    "endKey": "endMs"
+  },
+  "events": [
+    {
+      "eventName": "Event #1",
+      "startMs": 0,
+      "endMs": 100
+    },{
+      "eventName": "Event #2",
+      "startMs": 100,
+      "endMs": 250
+    },{
+      "eventName": "Event #3",
+      "startMs": 200,
+      "endMs": 300
+    }
+  ]
+}

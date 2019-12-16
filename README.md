@@ -93,7 +93,7 @@ implementation 'com.acelost.timeline:timeline-builder:0.0.4'
 
 ## Input json format
 
-```json
+```
 {
   "meta": {
       "title": <String>, // [Required] Chart title

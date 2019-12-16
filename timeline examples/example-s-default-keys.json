@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "title": "Timeline Example 1",
+    "units": "s"
+  },
+  "events": [
+    {
+      "name": "Event #1",
+      "start": 0,
+      "end": 10
+    },{
+      "name": "Event #2",
+      "start": 10,
+      "end": 25
+    },{
+      "name": "Event #3",
+      "start": 20,
+      "end": 30
+    }
+  ]
+}
