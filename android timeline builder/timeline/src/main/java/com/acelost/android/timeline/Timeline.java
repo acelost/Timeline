@@ -11,7 +11,7 @@ import static com.acelost.android.timeline.Preconditions.checkNotEmpty;
 import static com.acelost.android.timeline.Preconditions.checkNotNull;
 
 // threadsafe
-public class Timeline {
+public final class Timeline {
 
     private final String title;
     private final TimelineKind kind;
@@ -29,7 +29,12 @@ public class Timeline {
 
     public void addEvent(@NonNull final TimelineEvent event) {
         checkNotNull(event);
-        events.add(event);
+        this.events.add(event);
+    }
+
+    public void addEvents(@NonNull final Collection<TimelineEvent> events) {
+        checkNotNull(events);
+        this.events.addAll(events);
     }
 
     @NonNull

@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import static com.acelost.android.timeline.Preconditions.checkNotEmpty;
 import static com.acelost.android.timeline.Preconditions.checkNotNull;
 
-public class TimelineEvent {
+public final class TimelineEvent {
 
     private final String name;
     private final TimeUnit units;

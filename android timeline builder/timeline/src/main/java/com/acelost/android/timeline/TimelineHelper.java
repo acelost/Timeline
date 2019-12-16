@@ -23,7 +23,7 @@ import java.io.Writer;
 import static com.acelost.android.timeline.Preconditions.checkAtLeast;
 import static com.acelost.android.timeline.Preconditions.checkNotNull;
 
-public class TimelineHelper {
+public final class TimelineHelper {
 
     @NonNull
     public static JSONObject toJson(@NonNull final Timeline timeline) {

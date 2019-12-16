@@ -2,7 +2,7 @@ package com.acelost.android.timeline;
 
 import androidx.annotation.NonNull;
 
-class Preconditions {
+final class Preconditions {
 
     @NonNull
     static <T> T checkNotNull(final T reference) {
