@@ -4,7 +4,7 @@
 
 `Timeline` is a tool for building and viewing time range charts.
 
-# Show me!
+# Input and output
 
 `Timeline` uses simple json format for describing time range charts:
 
@@ -41,11 +41,11 @@
 
 Resulting timeline looks so:
 
-<img src="timeline-example.png" width="760">
+<img src="timeline-example.png" width="900">
 
 ## How to use
 
-1. Download <a src="https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/acelost/Timeline/tree/master/html%20timeline%20viewer">timeline html viewer</a>
+1. Download [timeline html viewer](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/acelost/Timeline/tree/master/html%20timeline%20viewer)
 2. Open `timeline.html` file in your browser
 3. Put file with timeline on page
 
