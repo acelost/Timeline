@@ -20,8 +20,10 @@ const FIELD_END = 'end';
 const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
 const TIMELINE_KIND_RELATIVE = "RELATIVE";
 
-const CHART_FRAME_HEIGHT_PERCENTAGE = 7;
-const CHART_ROW_HEIGHT_PERCENTAGE = 1.5;
+const CHART_HEADER_HEIGHT = 100;
+const CHART_FOOTER_HEIGHT = 50;
+const BAR_WIDTH_PX = 20;
+const BAR_PADDING_PX = 4;
 
 Highcharts.SVGRenderer.prototype.symbols.cross = function (x, y, w, h) {
     var path = [
@@ -183,16 +185,26 @@ function formatTooltip() {
 function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) {
     let timelineId = filename;
     let timelineContainer = findTimelineContainer(timelineId);
-    let ratio = CHART_FRAME_HEIGHT_PERCENTAGE + CHART_ROW_HEIGHT_PERCENTAGE * sequenceCount + '%';
+    let chartHeight = CHART_HEADER_HEIGHT + CHART_FOOTER_HEIGHT + (BAR_WIDTH_PX + BAR_PADDING_PX) * sequenceCount;
     Highcharts.chart(timelineId, {
         chart: {
             type: 'xrange',
-            height: ratio
+            height: chartHeight
         },
         legend: {
             itemStyle: {
                 fontSize: '15px'
             }
+        },
+        title: {
+            text: title,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '28px'
+            }
+        },
+        tooltip: {
+            formatter: formatTooltip
         },
         xAxis: {
             type: 'datetime',
@@ -205,16 +217,6 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
                 millisecond: '%M:%S.%L',
                 day: '' // to prevent 1 Jan tick
             }
-        },
-        title: {
-            text: title,
-            style: {
-                fontWeight: 'bold',
-                fontSize: '28px'
-            }
-        },
-        tooltip: {
-            formatter: formatTooltip
         },
         yAxis: {
             title: {
@@ -231,7 +233,7 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
         series: [{
             name: filename,
             borderColor: 'gray',
-            pointWidth: 20,
+            pointWidth: BAR_WIDTH_PX,
             data: eventDatas,
             turboThreshold: eventDatas.length + 1,
             dataLabels: {
