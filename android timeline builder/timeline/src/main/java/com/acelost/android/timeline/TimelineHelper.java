@@ -25,18 +25,26 @@ import static com.acelost.android.timeline.Preconditions.checkNotNull;
 
 public final class TimelineHelper {
 
+    private static final String KEY_EVENT_NAME = "name";
+    private static final String KEY_EVENT_START = "startMs";
+    private static final String KEY_EVENT_END = "endMs";
+
     @NonNull
     public static JSONObject toJson(@NonNull final Timeline timeline) {
         checkNotNull(timeline);
         final JSONObject metaJson = new JSONObject();
         putSafe(metaJson, "title", timeline.getTitle());
         putSafe(metaJson, "kind", timeline.getKind().name());
+        putSafe(metaJson, "units", "ms");
+        putSafe(metaJson, "nameKey", KEY_EVENT_NAME);
+        putSafe(metaJson, "startKey", KEY_EVENT_START);
+        putSafe(metaJson, "endKey", KEY_EVENT_END);
         final JSONArray eventsJson = new JSONArray();
         for (TimelineEvent event : timeline.getEvents()) {
             final JSONObject eventJson = new JSONObject();
-            putSafe(eventJson, "name", event.getName());
-            putSafe(eventJson, "startMs", event.getStartMillis());
-            putSafe(eventJson, "endMs", event.getEndMillis());
+            putSafe(eventJson, KEY_EVENT_NAME, event.getName());
+            putSafe(eventJson, KEY_EVENT_START, event.getStartMillis());
+            putSafe(eventJson, KEY_EVENT_END, event.getEndMillis());
             eventsJson.put(eventJson);
         }
         final JSONObject timelineJson = new JSONObject();

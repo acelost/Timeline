@@ -1,24 +1,21 @@
-let parsers = [
-    {
-        units: "ms",
-        nameField: "name",
-        startField: "startMs",
-        endField: "endMs"
-    },
-    {
-        units: "ns",
-        nameField: "name",
-        startField: "startNs",
-        endField: "endNs"
-    }
-];
-
-const FIELD_NAME = 'name';
-const FIELD_START = 'start';
-const FIELD_END = 'end';
+const META_TITLE = 'title';
+const META_KIND = 'kind';
+const META_UNITS = 'units';
+const META_NAME_KEY = 'nameKey';
+const META_START_KEY = 'startKey';
+const META_END_KEY = 'endKey';
 
 const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
 const TIMELINE_KIND_RELATIVE = "RELATIVE";
+
+const DEFAULT_UNITS = 'ms';
+const DEFAULT_NAME_KEY = 'name';
+const DEFAULT_START_KEY = 'start';
+const DEFAULT_END_KEY = 'end';
+
+const EVENT_NAME = 'name';
+const EVENT_START = 'start';
+const EVENT_END = 'end';
 
 const CHART_HEADER_HEIGHT = 100;
 const CHART_FOOTER_HEIGHT = 50;
@@ -44,102 +41,76 @@ document.addEventListener('NewTimeline', function (event) {
 function handleTimeline(timelineJson) {
     let meta = timelineJson['meta'];
     let filename = timelineJson.filename;
-    let title = meta['title'];
-    let kind = meta['kind'];
-    let events = parseEvents(timelineJson['events']);
+    let title = meta[META_TITLE];
+    let kind = meta[META_KIND];
+
+    let events = parseEvents(meta, timelineJson['events']);
     if (kind == TIMELINE_KIND_RELATIVE) {
         convertToRelative(events);
     }
+
     let sequences = prepareOrderedSequences(events);
-    let eventNames = [];
-    let eventDatas = [];
+    let categories = [];
+    let points = [];
     for (var i = 0; i < sequences.length; i++) {
         let sequence = sequences[i];
-        var eventName = undefined;
+        var category = undefined;
         for (var event of sequence) {
-            let start = event[FIELD_START];
-            let end = event[FIELD_END];
+            let start = event[EVENT_START];
+            let end = event[EVENT_END];
             let data = {
                 x: start,
                 x2: end,
                 y: i
             };
-            if (!eventName) {
-                eventName = event[FIELD_NAME];
+            if (!category) {
+                category = event[EVENT_NAME];
             }
-            eventDatas.push(data);
+            points.push(data);
         }
-        eventNames.push(eventName);
+        categories.push(category);
     }
-    renderTimeline(filename, title, sequences.length, eventNames, eventDatas);
+    renderTimeline(filename, title, sequences.length, categories, points);
 }
 
-function parseEvents(rawEvents) {
+function parseEvents(meta, rawEvents) {
+    let nameKey = meta[META_NAME_KEY] || DEFAULT_NAME_KEY;
+    let startKey = meta[META_START_KEY] || DEFAULT_START_KEY;
+    let endKey = meta[META_END_KEY] || DEFAULT_END_KEY;
+    let units = meta[META_UNITS] || DEFAULT_UNITS;
     let parsedEvents = [];
     for (var i = 0; i < rawEvents.length; i++) {
         let rawEvent = rawEvents[i];
-        let event = {};
-        event[FIELD_NAME] = parseEventName(rawEvent);
-        event[FIELD_START] = parseEventStart(rawEvent);
-        event[FIELD_END] = parseEventEnd(rawEvent);
-        parsedEvents.push(event);
+        let parsedEvent = {};
+        parsedEvent[EVENT_NAME] = rawEvent[nameKey];
+        parsedEvent[EVENT_START] = convertToMs(rawEvent[startKey], units);
+        parsedEvent[EVENT_END] = convertToMs(rawEvent[endKey], units);
+        parsedEvents.push(parsedEvent);
     }
     return parsedEvents;
 }
 
-function parseEventName(event) {
-    for (var i = 0; i < parsers.length; i++) {
-        let parser = parsers[i];
-        let nameField = parser['nameField'];
-        if (nameField in event) {
-            return event[nameField];
-        }
-    }
-    throw Error("Не найден парсер для названия события: " + JSON.stringify(event));
-}
-
-function parseEventStart(event) {
-    for (var i = 0; i < parsers.length; i++) {
-        let parser = parsers[i];
-        let startField = parser['startField'];
-        if (startField in event) {
-            return convertToMs(event[startField], parser['units']);
-        }
-    }
-    throw Error("Не найден парсер для начала события: " + JSON.stringify(event));
-}
-
-function parseEventEnd(event) {
-    for (var i = 0; i < parsers.length; i++) {
-        let parser = parsers[i];
-        let endField = parser['endField'];
-        if (endField in event) {
-            return convertToMs(event[endField], parser['units']);
-        }
-    }
-    throw Error("Не найден парсер для окончания события: " + JSON.stringify(event));
-}
-
 function convertToMs(value, units) {
     switch(units) {
+        case 's': return value * 1000;
         case 'ms': return value;
         case 'ns': return Math.floor(value / 1000000);
     }
-    throw Error("В парсере не указаны единицы измерения.")
+    throw Error("Unknown units `" + units + "`.");
 }
 
 function convertToRelative(events) {
     if (events.length > 0) {
         var min = Number.MAX_SAFE_INTEGER;
         for (var event of events) {
-            let less = Math.min(event[FIELD_START], event[FIELD_END]);
+            let less = Math.min(event[EVENT_START], event[EVENT_END]);
             if (less < min) {
                 min = less;
             }
         }
         for (var event of events) {
-            event[FIELD_START] -= min;
-            event[FIELD_END] -= min;
+            event[EVENT_START] -= min;
+            event[EVENT_END] -= min;
         }
     }
 }
@@ -148,7 +119,7 @@ function prepareOrderedSequences(events) {
     events.sort(eventComparator); // To guaratee asc order of events in sequence
     let map = new Map();
     for (var event of events) {
-        let eventName = event[FIELD_NAME];
+        let eventName = event[EVENT_NAME];
         var sequence = map.get(eventName);
         if (!sequence) {
             sequence = [];
@@ -160,18 +131,18 @@ function prepareOrderedSequences(events) {
 }
 
 function eventComparator(a, b) {
-    if (a[FIELD_START] != b[FIELD_START]) {
-        return a[FIELD_START] - b[FIELD_START];
+    if (a[EVENT_START] != b[EVENT_START]) {
+        return a[EVENT_START] - b[EVENT_START];
     }
-    if (a[FIELD_END] != b[FIELD_END]) {
-        return a[FIELD_END] - b[FIELD_END];
+    if (a[EVENT_END] != b[EVENT_END]) {
+        return a[EVENT_END] - b[EVENT_END];
     }
     return 0;
 }
 
 function sequenceComparator(a, b) {
     if (a.length == 0 || b.length == 0) {
-        throw Error("Обнаружена попытка сравнить пустую последовательность.")
+        throw Error("Attempt to compare empty sequence.")
     }
     return eventComparator(a[0], b[0]);
 }
@@ -182,7 +153,7 @@ function formatTooltip() {
     return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + point.yCategory + '</b> ' + duration + ' ms<br/>';
 }
 
-function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) {
+function renderTimeline(filename, title, sequenceCount, categories, points) {
     let timelineId = filename;
     let timelineContainer = findTimelineContainer(timelineId);
     let chartHeight = CHART_HEADER_HEIGHT + CHART_FOOTER_HEIGHT + (BAR_WIDTH_PX + BAR_PADDING_PX) * sequenceCount;
@@ -214,7 +185,7 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
                 }
             },
             dateTimeLabelFormats: {
-                millisecond: '%M:%S.%L',
+                millisecond: '%S.%L', // 1500ms -> 01.500
                 day: '' // to prevent 1 Jan tick
             }
         },
@@ -227,15 +198,15 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
                     fontSize: '15px'
                 }
             },
-            categories: eventNames,
+            categories: categories,
             reversed: true
         },
         series: [{
             name: filename,
             borderColor: 'gray',
             pointWidth: BAR_WIDTH_PX,
-            data: eventDatas,
-            turboThreshold: eventDatas.length + 1,
+            data: points,
+            turboThreshold: points.length + 1,
             dataLabels: {
                 enabled: true
             }
@@ -245,7 +216,7 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
                 deleteButton: {
                     symbol: 'cross',
                     onclick: function () {
-                        findTimilineList().removeChild(timelineContainer);
+                        findTimelineList().removeChild(timelineContainer);
                     }
                 }
             }
@@ -253,12 +224,12 @@ function renderTimeline(filename, title, sequenceCount, eventNames, eventDatas) 
     });
 }
 
-function findTimilineList() {
+function findTimelineList() {
     return document.getElementById('timeline-list');
 }
 
 function findTimelineContainer(timelineId) {
-    let timelineList = findTimilineList();
+    let timelineList = findTimelineList();
     var reusedContainer = undefined;
     let nodes = timelineList.childNodes;
     for (var i = 0; i < nodes.length; i++) {

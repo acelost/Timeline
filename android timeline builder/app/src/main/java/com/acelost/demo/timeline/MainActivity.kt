@@ -13,9 +13,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val timeline = Timeline("t")
-        timeline.addEvent(TimelineEvent("e", TimeUnit.SECONDS, 1, 5))
-        val json = TimelineHelper.toJson(timeline)
-        val string = TimelineHelper.toJsonString(timeline)
-        TimelineHelper.share(this, timeline, "timeline_", "messss", "hinnnt")
+        timeline.addEvent(TimelineEvent("event1", TimeUnit.SECONDS, 1, 5))
+        timeline.addEvent(TimelineEvent("event2", TimeUnit.MILLISECONDS, 2100, 8000))
+        timeline.addEvent(TimelineEvent("event3", TimeUnit.SECONDS, 9, 10))
+        TimelineHelper.share(this, timeline, "timeline-", null, null)
     }
 }

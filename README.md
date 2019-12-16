@@ -22,18 +22,18 @@
     },
     {
       "name": "Event2",
-      "startMs": 500,
-      "endMs": 2500
+      "start": 500,
+      "end": 2500
     },
     {
       "name": "Event3",
-      "startMs": 1000,
-      "endMs": 1500
+      "start": 1000,
+      "end": 1500
     },
     {
       "name": "Event1",
-      "startMs": 2100,
-      "endMs": 2400
+      "start": 2100,
+      "end": 2400
     }
   ]
 }
@@ -41,7 +41,7 @@
 
 Resulting timeline looks so:
 
-<img src="timeline-example.png" width="900">
+<img src="timeline-example.png" width="1000">
 
 ## How to use
 
@@ -88,7 +88,29 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:0.0.3'
+implementation 'com.acelost.timeline:timeline-builder:0.0.4'
+```
+
+## Input json format
+
+```json
+{
+  "meta": {
+      "title": <String>, // [Required] Chart title
+      "kind": <'ABSOLUTE', 'RELATIVE'>, // [Optional] Chart kind ('ABSOLUTE' by default)
+      "units": <'s', 'ms', 'ns'>, // [Optional] Units for event values ('ms' by default)
+      "nameKey": <String>, // [Optional] Event name mapping key ('name' by default)
+      "startKey": <String>, // [Optional] Event start time mapping key ('start' by default)
+      "endKey": <String> // [Optional] Event end time mapping key ('end' by default)
+  },
+  "events": [
+      {
+          "<your name key>": <String>, // [Required] Event name
+          "<your start key>": <Long>, // [Required] Event start time
+          "<your end key>": <Long> // [Required] Event end time
+      }, ...
+  ]
+}
 ```
 
 ## License
