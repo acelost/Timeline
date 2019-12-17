@@ -39,8 +39,8 @@ document.addEventListener('NewTimeline', function (event) {
 });
 
 function handleTimeline(timelineJson) {
+    let source = timelineJson['source'];
     let meta = timelineJson['meta'];
-    let filename = timelineJson.filename;
     let title = meta[META_TITLE];
     let kind = meta[META_KIND];
 
@@ -70,7 +70,7 @@ function handleTimeline(timelineJson) {
         }
         categories.push(category);
     }
-    renderTimeline(filename, title, sequences.length, categories, points);
+    renderTimeline(source, title, sequences.length, categories, points);
 }
 
 function parseEvents(meta, rawEvents) {
@@ -153,8 +153,8 @@ function formatTooltip() {
     return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + point.yCategory + '</b> ' + duration + ' ms<br/>';
 }
 
-function renderTimeline(filename, title, sequenceCount, categories, points) {
-    let timelineId = filename;
+function renderTimeline(source, title, sequenceCount, categories, points) {
+    let timelineId = source;
     let timelineContainer = findTimelineContainer(timelineId);
     let chartHeight = CHART_HEADER_HEIGHT + CHART_FOOTER_HEIGHT + (BAR_WIDTH_PX + BAR_PADDING_PX) * sequenceCount;
     Highcharts.chart(timelineId, {
@@ -202,7 +202,7 @@ function renderTimeline(filename, title, sequenceCount, categories, points) {
             reversed: true
         },
         series: [{
-            name: filename,
+            name: source,
             borderColor: 'gray',
             pointWidth: BAR_WIDTH_PX,
             data: points,

@@ -47,7 +47,7 @@ Resulting timeline looks so:
 
 1. Download [timeline html viewer](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/acelost/Timeline/tree/master/html%20timeline%20viewer)
 2. Open `timeline.html` file in your browser
-3. Put file with timeline on page
+3. Drop file with timeline on page or just copy timeline json and paste it (Ctrl+V)
 
 ## Builder for Android
 

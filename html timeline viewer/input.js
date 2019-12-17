@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener('paste', function (event) {
+    let paste = (event.clipboardData || window.clipboardData).getData('text');
+    let source = 'paste(' + hashCode(paste) + ')';
+    handleContent(source, paste);
+    event.preventDefault();
+});
+
 function preventDefaults (e) {
     e.preventDefault()
     e.stopPropagation()
@@ -41,21 +48,39 @@ function handleFiles(files) {
 }
 
 function handleFile(file) {
-    parseTimelineFile(file);
-}
-
-function parseTimelineFile(file) {
     let reader = new FileReader();
     reader.onload = function(event) {
         let content = event.target.result;
-        let timelineJson = JSON.parse(content);
-        timelineJson['filename'] = file.name;
-        notifyNewTimeline(timelineJson);
+        handleContent(file.name, content);
     };
     reader.readAsText(file);
+}
+
+function handleContent(source, content) {
+    try {
+        let timelineJson = JSON.parse(content);
+        timelineJson['source'] = source;
+        notifyNewTimeline(timelineJson);
+    } catch(error) {
+        console.log(error);
+        alert('Timeline json parsing failed! Please check your input data and try again.\n' + error);
+    }
+}
+
+function parseTimeline(source, content) {
+    let timelineJson = JSON.parse(content);
+    timelineJson['source'] = source;
+    return timelineJson;
 }
 
 function notifyNewTimeline(timelineJson) {
     let event = new CustomEvent('NewTimeline', { 'detail': timelineJson });
     document.dispatchEvent(event);
+}
+
+function hashCode(s) {
+    for(var i = 0, h = 0; i < s.length; i++) {
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+    }
+    return Math.abs(h);
 }
