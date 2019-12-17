@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +58,11 @@ public final class TimelineHelper {
     public static String toJsonString(@NonNull final Timeline timeline) {
         checkNotNull(timeline);
         return toJson(timeline).toString();
+    }
+
+    public static void print(@NonNull final Timeline timeline) {
+        checkNotNull(timeline);
+        Log.i("TimelineLog", toJsonString(timeline));
     }
 
     @NonNull
