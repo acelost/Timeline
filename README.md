@@ -17,8 +17,8 @@
   "events": [
     {
       "name": "Event1",
-      "startMs": 1000,
-      "endMs": 2000
+      "start": 1000,
+      "end": 2000
     },
     {
       "name": "Event2",
