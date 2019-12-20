@@ -6,6 +6,7 @@ const META_NAME_KEY = 'nameKey';
 const META_START_KEY = 'startKey';
 const META_END_KEY = 'endKey';
 const META_COUNT_KEY = 'countKey';
+const META_PAYLOAD_KEY = 'payloadKey';
 
 const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
 const TIMELINE_KIND_RELATIVE = "RELATIVE";
@@ -15,13 +16,16 @@ const DEFAULT_NAME_KEY = 'name';
 const DEFAULT_START_KEY = 'start';
 const DEFAULT_END_KEY = 'end';
 const DEFAULT_COUNT_KEY = 'count';
+const DEFAULT_PAYLOAD_KEY = 'payload';
 
 const EVENT_NAME = 'name';
 const EVENT_START = 'start';
 const EVENT_END = 'end';
 const EVENT_COUNT = 'count';
+const EVENT_PAYLOAD = 'payload';
 
-const POINT_PAYLOAD_COUNT = 'count';
+const POINT_COUNT = 'count';
+const POINT_PAYLOAD = 'payload';
 
 const CHART_HEADER_HEIGHT = 100;
 const CHART_FOOTER_HEIGHT = 50;
@@ -66,11 +70,13 @@ function handleTimeline(timelineJson) {
             let start = event[EVENT_START];
             let end = event[EVENT_END];
             let count = event[EVENT_COUNT];
+            let payload = event[EVENT_PAYLOAD];
             let data = {
                 x: start,
                 x2: end,
                 y: i,
-                count: count // POINT_PAYLOAD_COUNT
+                count: count, // POINT_COUNT
+                payload: payload // POINT_PAYLOAD
             };
             if (!category) {
                 category = event[EVENT_NAME];
@@ -92,6 +98,7 @@ function parseEvents(meta, aliases, rawEvents) {
         parsedEvent[EVENT_START] = convertToMs(parseEventStart(meta, rawEvent), units);
         parsedEvent[EVENT_END] = convertToMs(parseEventEnd(meta, rawEvent), units);
         parsedEvent[EVENT_COUNT] = parseCount(meta, rawEvent);
+        parsedEvent[EVENT_PAYLOAD] = parsePayload(meta, rawEvent);
         parsedEvents.push(parsedEvent);
     }
     return parsedEvents;
@@ -132,6 +139,11 @@ function parseEventTimer(key, meta, rawEvent) {
         return parseInt(encodedValue, encodeRadix);
     }
     return rawEvent[key];
+}
+
+function parsePayload(meta, rawEvent) {
+    let payloadKey = meta[META_PAYLOAD_KEY] || DEFAULT_PAYLOAD_KEY;
+    return rawEvent[payloadKey];
 }
 
 function convertToMs(value, units) {
@@ -194,11 +206,17 @@ function sequenceComparator(a, b) {
 function formatTooltip() {
     let point = this;
     let duration = point.x2 - point.x;
-    let count = point['point'][POINT_PAYLOAD_COUNT];
+    let count = point['point'][POINT_COUNT];
     let category = count > 1
         ? (point.yCategory + ' (join ' + count + ')')
         : (point.yCategory);
-    return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + category + '</b> ' + duration + ' ms<br/>';
+    let mainInfo = '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + category + '</b> ' + duration + ' ms<br/>';
+    let payload = point['point'][POINT_PAYLOAD];
+    if (payload) {
+        return mainInfo + '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>payload: </b>' + payload + '<br/>';
+    } else {
+        return mainInfo;
+    }
 }
 
 function renderTimeline(source, title, sequenceCount, categories, points) {
