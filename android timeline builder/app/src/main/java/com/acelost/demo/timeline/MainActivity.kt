@@ -16,6 +16,9 @@ class MainActivity : AppCompatActivity() {
         timeline.addEvent(TimelineEvent("event1", TimeUnit.SECONDS, 1, 5))
         timeline.addEvent(TimelineEvent("event2", TimeUnit.MILLISECONDS, 2100, 8000))
         timeline.addEvent(TimelineEvent("event3", TimeUnit.SECONDS, 9, 10))
-        TimelineHelper.share(this, timeline, "timeline-", null, null)
+        timeline.addEvent(TimelineEvent("event1", TimeUnit.SECONDS, 5, 6));
+        val transformed = timeline.transform().join(0, TimeUnit.SECONDS).apply()
+        TimelineHelper.print(transformed)
+        //TimelineHelper.share(this, transformed, "timeline-", null, null)
     }
 }

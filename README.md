@@ -91,6 +91,41 @@ For integrating `android timeline builder` just add this dependency to your grad
 implementation 'com.acelost.timeline:timeline-builder:0.0.5'
 ```
 
+## Android Transform API
+
+Transform API allows to prepare your timeline for rendering.
+
+1. You can filter events in timeline:
+```java
+public Timeline prepare(Timeline timeline) {
+    return timeline.transform()
+            .filter(new MyPredicate())
+            //.filterMinDuration(1, TimeUnit.SECOND)
+            //.filterMaxDuration(10, TimeUnit.SECOND
+            .apply();
+}
+```
+
+2. You can join events with same name:
+```java
+public Timeline prepare(Timeline timeline) {
+    return timeline.transform()
+            .join(new MyNamePredicate(), new MyJoinPredicate())
+            //.join(10, TimeUnit.MILLISECONDS)
+            //.join(10, TimeUnit.MILLISECONDS, "Event7")
+            .apply();
+}
+```
+
+3. You can implement custom transformer:
+```java
+public Timeline prepare(Timeline timeline) {
+    return timeline.transform()
+            .compose(new MyTransformer())
+            .apply();
+}
+```
+
 ## Input json format
 
 ```
@@ -102,12 +137,14 @@ implementation 'com.acelost.timeline:timeline-builder:0.0.5'
       "nameKey": <String>, // [Optional] Event name mapping key ('name' by default)
       "startKey": <String>, // [Optional] Event start time mapping key ('start' by default)
       "endKey": <String> // [Optional] Event end time mapping key ('end' by default)
+      "countKey": <String> // [Optional] Event count mapping key ('count' by default)
   },
   "events": [
       {
           "<your name key>": <String>, // [Required] Event name
           "<your start key>": <Long>, // [Required] Event start time
           "<your end key>": <Long> // [Required] Event end time
+          "<your count key>": <Int> // [Optional] Event count
       }, ...
   ]
 }

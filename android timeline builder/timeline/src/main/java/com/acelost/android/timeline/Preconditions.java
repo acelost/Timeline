@@ -2,10 +2,10 @@ package com.acelost.android.timeline;
 
 import androidx.annotation.NonNull;
 
-final class Preconditions {
+public final class Preconditions {
 
     @NonNull
-    static <T> T checkNotNull(final T reference) {
+    public static <T> T checkNotNull(final T reference) {
         if (reference == null) {
             throw new NullPointerException();
         }
@@ -13,7 +13,7 @@ final class Preconditions {
     }
 
     @NonNull
-    static String checkNotEmpty(final String string) {
+    public static String checkNotEmpty(final String string) {
         if (string == null || string.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -21,11 +21,32 @@ final class Preconditions {
     }
 
     @NonNull
-    static String checkAtLeast(final String string, final int minLength) {
+    public static String checkAtLeast(final String string, final int minLength) {
         if (string == null || string.length() < minLength) {
             throw new IllegalArgumentException();
         }
         return string;
+    }
+
+    public static int checkIsPositive(int value) {
+        if (value < 1) {
+            throw new IllegalArgumentException();
+        }
+        return value;
+    }
+
+    public static long checkIsPositive(long value) {
+        if (value < 1) {
+            throw new IllegalArgumentException();
+        }
+        return value;
+    }
+
+    public static long checkNotNegative(long value) {
+        if (value < 0) {
+            throw new IllegalArgumentException();
+        }
+        return value;
     }
 
 }

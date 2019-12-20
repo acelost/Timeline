@@ -29,6 +29,7 @@ public final class TimelineHelper {
     private static final String KEY_EVENT_NAME = "name";
     private static final String KEY_EVENT_START = "startMs";
     private static final String KEY_EVENT_END = "endMs";
+    private static final String KEY_EVENT_COUNT = "count";
 
     @NonNull
     public static JSONObject toJson(@NonNull final Timeline timeline) {
@@ -40,12 +41,17 @@ public final class TimelineHelper {
         putSafe(metaJson, "nameKey", KEY_EVENT_NAME);
         putSafe(metaJson, "startKey", KEY_EVENT_START);
         putSafe(metaJson, "endKey", KEY_EVENT_END);
+        putSafe(metaJson, "countKey", KEY_EVENT_COUNT);
         final JSONArray eventsJson = new JSONArray();
         for (TimelineEvent event : timeline.getEvents()) {
             final JSONObject eventJson = new JSONObject();
             putSafe(eventJson, KEY_EVENT_NAME, event.getName());
             putSafe(eventJson, KEY_EVENT_START, event.getStartMillis());
             putSafe(eventJson, KEY_EVENT_END, event.getEndMillis());
+            final int count = event.getCount();
+            if (count > 1) {
+                putSafe(eventJson, KEY_EVENT_COUNT, event.getCount());
+            }
             eventsJson.put(eventJson);
         }
         final JSONObject timelineJson = new JSONObject();
