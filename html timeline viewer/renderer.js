@@ -4,6 +4,7 @@ const META_UNITS = 'units';
 const META_NAME_KEY = 'nameKey';
 const META_START_KEY = 'startKey';
 const META_END_KEY = 'endKey';
+const META_COUNT_KEY = 'countKey';
 
 const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
 const TIMELINE_KIND_RELATIVE = "RELATIVE";
@@ -12,10 +13,14 @@ const DEFAULT_UNITS = 'ms';
 const DEFAULT_NAME_KEY = 'name';
 const DEFAULT_START_KEY = 'start';
 const DEFAULT_END_KEY = 'end';
+const DEFAULT_COUNT_KEY = 'count';
 
 const EVENT_NAME = 'name';
 const EVENT_START = 'start';
 const EVENT_END = 'end';
+const EVENT_COUNT = 'count';
+
+const POINT_PAYLOAD_COUNT = 'count';
 
 const CHART_HEADER_HEIGHT = 100;
 const CHART_FOOTER_HEIGHT = 50;
@@ -58,10 +63,12 @@ function handleTimeline(timelineJson) {
         for (var event of sequence) {
             let start = event[EVENT_START];
             let end = event[EVENT_END];
+            let count = event[EVENT_COUNT];
             let data = {
                 x: start,
                 x2: end,
-                y: i
+                y: i,
+                count: count // POINT_PAYLOAD_COUNT
             };
             if (!category) {
                 category = event[EVENT_NAME];
@@ -77,6 +84,7 @@ function parseEvents(meta, rawEvents) {
     let nameKey = meta[META_NAME_KEY] || DEFAULT_NAME_KEY;
     let startKey = meta[META_START_KEY] || DEFAULT_START_KEY;
     let endKey = meta[META_END_KEY] || DEFAULT_END_KEY;
+    let countKey = meta[META_COUNT_KEY] || DEFAULT_COUNT_KEY;
     let units = meta[META_UNITS] || DEFAULT_UNITS;
     let parsedEvents = [];
     for (var i = 0; i < rawEvents.length; i++) {
@@ -85,6 +93,7 @@ function parseEvents(meta, rawEvents) {
         parsedEvent[EVENT_NAME] = rawEvent[nameKey];
         parsedEvent[EVENT_START] = convertToMs(rawEvent[startKey], units);
         parsedEvent[EVENT_END] = convertToMs(rawEvent[endKey], units);
+        parsedEvent[EVENT_COUNT] = rawEvent[countKey] || 1;
         parsedEvents.push(parsedEvent);
     }
     return parsedEvents;
@@ -116,7 +125,7 @@ function convertToRelative(events) {
 }
 
 function prepareOrderedSequences(events) {
-    events.sort(eventComparator); // To guaratee asc order of events in sequence
+    events.sort(eventComparator); // To guarantee asc order of events in sequence
     let map = new Map();
     for (var event of events) {
         let eventName = event[EVENT_NAME];
@@ -150,7 +159,11 @@ function sequenceComparator(a, b) {
 function formatTooltip() {
     let point = this;
     let duration = point.x2 - point.x;
-    return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + point.yCategory + '</b> ' + duration + ' ms<br/>';
+    let count = point['point'][POINT_PAYLOAD_COUNT];
+    let category = count > 1
+        ? (point.yCategory + ' (join ' + count + ')')
+        : (point.yCategory);
+    return '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + category + '</b> ' + duration + ' ms<br/>';
 }
 
 function renderTimeline(source, title, sequenceCount, categories, points) {
