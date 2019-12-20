@@ -13,9 +13,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val timeline = Timeline("Simple Timeline")
-        for (i in 0 until 80) {
+        for (i in 0 until 20) {
             val name = "event#${i%10}"
-            timeline.addEvent(TimelineEvent(name, TimeUnit.SECONDS, i.toLong(), (i + 1).toLong()))
+            timeline.addEvent(TimelineEvent(name, "pld${name}x", TimeUnit.SECONDS, i.toLong(), (i + 1).toLong()))
         }
         TimelineHelper.print(timeline, false)
         TimelineHelper.print(timeline, true)

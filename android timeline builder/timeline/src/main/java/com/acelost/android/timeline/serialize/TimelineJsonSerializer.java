@@ -25,6 +25,7 @@ public final class TimelineJsonSerializer {
     private final String startKey;
     private final String endKey;
     private final String countKey;
+    private final String payloadKey;
     private final boolean compressEventNames;
     private final boolean compressEventTimers;
 
@@ -33,14 +34,16 @@ public final class TimelineJsonSerializer {
             @NonNull final String startKey,
             @NonNull final String endKey,
             @NonNull final String countKey,
+            @NonNull final String payloadKey,
             final boolean compressEventNames,
             final boolean compressEventTimers
     ) {
-        checkUnique(nameKey, startKey, endKey, countKey);
+        checkUnique(nameKey, startKey, endKey, countKey, payloadKey);
         this.nameKey = checkNotNull(nameKey);
         this.startKey = checkNotNull(startKey);
         this.endKey = checkNotNull(endKey);
         this.countKey = checkNotNull(countKey);
+        this.payloadKey = checkNotNull(payloadKey);
         this.compressEventNames = compressEventNames;
         this.compressEventTimers = compressEventTimers;
     }
@@ -75,6 +78,10 @@ public final class TimelineJsonSerializer {
                 putSafe(eventJson, startKey, event.getStartMillis());
                 putSafe(eventJson, endKey, event.getEndMillis());
             }
+            final String payload = event.getPayload();
+            if (payload != null) {
+                putSafe(eventJson, payloadKey, payload);
+            }
             final int count = event.getCount();
             if (count > 1) {
                 putSafe(eventJson, countKey, count);
@@ -100,6 +107,7 @@ public final class TimelineJsonSerializer {
         putSafe(meta, "startKey", startKey);
         putSafe(meta, "endKey", endKey);
         putSafe(meta, "countKey", countKey);
+        putSafe(meta, "payloadKey", payloadKey);
         if (compressEventTimers) {
             putSafe(meta, "valueEncodeRadix", VALUE_RADIX);
         }

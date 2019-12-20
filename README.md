@@ -88,7 +88,7 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:0.0.8'
+implementation 'com.acelost.timeline:timeline-builder:0.0.9'
 ```
 
 ## Android Transform API
@@ -138,14 +138,16 @@ public Timeline prepare(Timeline timeline) {
       "startKey": <String>, // [Optional] Event start time mapping key ('start' by default)
       "endKey": <String>, // [Optional] Event end time mapping key ('end' by default)
       "countKey": <String>, // [Optional] Event count mapping key ('count' by default)
+      "payloadKey": <String>, // [Optional] Event payload mapping key ('payload' by default)
       "valueEncodeRadix": <Int> // [Optional] Radix of timer value encoding (undefined by default)
   },
   "events": [
       {
           "<your name key>": <String>, // [Required] Event name
           "<your start key>": <Long/EncodedString>, // [Required] Event start time
-          "<your end key>": <Long/EncodedString> // [Required] Event end time
-          "<your count key>": <Int> // [Optional] Event count
+          "<your end key>": <Long/EncodedString>, // [Required] Event end time
+          "<your count key>": <Int>, // [Optional] Event count
+          "<your payload key>": <String> // [Optional] Event payload
       }, ...
   ],
   "aliases": { // [Optional] Aliases for event names (using for json compression)

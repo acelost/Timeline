@@ -5,7 +5,7 @@ publish {
 
     def groupProjectID = 'com.acelost.timeline'
     def artifactProjectID = 'timeline-builder'
-    def publishVersionID = '0.0.8'
+    def publishVersionID = '0.0.9'
 
     userOrg = 'acelost'
     repoName = 'Timeline'

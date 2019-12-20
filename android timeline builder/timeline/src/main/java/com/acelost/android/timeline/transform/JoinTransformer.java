@@ -1,6 +1,7 @@
 package com.acelost.android.timeline.transform;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acelost.android.timeline.TimelineEvent;
 import com.acelost.android.timeline.predicate.BiPredicate;
@@ -102,7 +103,8 @@ public final class JoinTransformer implements TimelineTransformer {
         final long newStart = Math.min(e1Start, e2Start);
         final long newEnd = Math.max(e1End, e2End);
         final int newCount = e1.getCount() + e2.getCount();
-        return new TimelineEvent(e1.getName(), newUnits, newStart, newEnd, newCount);
+        final String newPayload = joinStrings(e1.getPayload(), e2.getPayload(), ";");
+        return new TimelineEvent(e1.getName(), newPayload, newUnits, newStart, newEnd, newCount);
     }
 
     private void clearNulls(@NonNull final ArrayList<?> list) {
@@ -112,6 +114,18 @@ public final class JoinTransformer implements TimelineTransformer {
                 iterator.remove();
             }
         }
+    }
+
+    @Nullable
+    private String joinStrings(@Nullable final String s1,
+                               @Nullable final String s2,
+                               @NonNull final String separator) {
+        if (s1 == null) {
+            return s2;
+        } else if (s2 == null) {
+            return s1;
+        }
+        return s1 + separator + s2;
     }
 
 }
