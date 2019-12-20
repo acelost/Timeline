@@ -173,7 +173,8 @@ function renderTimeline(source, title, sequenceCount, categories, points) {
     Highcharts.chart(timelineId, {
         chart: {
             type: 'xrange',
-            height: chartHeight
+            height: chartHeight,
+            zoomType: 'x'
         },
         legend: {
             itemStyle: {
