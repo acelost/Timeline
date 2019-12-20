@@ -1,6 +1,7 @@
 const META_TITLE = 'title';
 const META_KIND = 'kind';
 const META_UNITS = 'units';
+const META_VALUE_ENCODE_RADIX = 'valueEncodeRadix';
 const META_NAME_KEY = 'nameKey';
 const META_START_KEY = 'startKey';
 const META_END_KEY = 'endKey';
@@ -45,11 +46,12 @@ document.addEventListener('NewTimeline', function (event) {
 
 function handleTimeline(timelineJson) {
     let source = timelineJson['source'];
+    let aliases = timelineJson['aliases'];
     let meta = timelineJson['meta'];
     let title = meta[META_TITLE];
     let kind = meta[META_KIND];
 
-    let events = parseEvents(meta, timelineJson['events']);
+    let events = parseEvents(meta, aliases, timelineJson['events']);
     if (kind == TIMELINE_KIND_RELATIVE) {
         convertToRelative(events);
     }
@@ -80,23 +82,56 @@ function handleTimeline(timelineJson) {
     renderTimeline(source, title, sequences.length, categories, points);
 }
 
-function parseEvents(meta, rawEvents) {
-    let nameKey = meta[META_NAME_KEY] || DEFAULT_NAME_KEY;
-    let startKey = meta[META_START_KEY] || DEFAULT_START_KEY;
-    let endKey = meta[META_END_KEY] || DEFAULT_END_KEY;
-    let countKey = meta[META_COUNT_KEY] || DEFAULT_COUNT_KEY;
-    let units = meta[META_UNITS] || DEFAULT_UNITS;
+function parseEvents(meta, aliases, rawEvents) {
+    let units = parseUnits(meta);
     let parsedEvents = [];
     for (var i = 0; i < rawEvents.length; i++) {
         let rawEvent = rawEvents[i];
         let parsedEvent = {};
-        parsedEvent[EVENT_NAME] = rawEvent[nameKey];
-        parsedEvent[EVENT_START] = convertToMs(rawEvent[startKey], units);
-        parsedEvent[EVENT_END] = convertToMs(rawEvent[endKey], units);
-        parsedEvent[EVENT_COUNT] = rawEvent[countKey] || 1;
+        parsedEvent[EVENT_NAME] = parseEventName(meta, aliases, rawEvent);
+        parsedEvent[EVENT_START] = convertToMs(parseEventStart(meta, rawEvent), units);
+        parsedEvent[EVENT_END] = convertToMs(parseEventEnd(meta, rawEvent), units);
+        parsedEvent[EVENT_COUNT] = parseCount(meta, rawEvent);
         parsedEvents.push(parsedEvent);
     }
     return parsedEvents;
+}
+
+function parseUnits(meta) {
+    return meta[META_UNITS] || DEFAULT_UNITS;
+}
+
+function parseCount(meta, rawEvent) {
+    let countKey = meta[META_COUNT_KEY] || DEFAULT_COUNT_KEY;
+    return rawEvent[countKey] || 1;
+}
+
+function parseEventName(meta, aliases, rawEvent) {
+    let nameKey = meta[META_NAME_KEY] || DEFAULT_NAME_KEY;
+    if (aliases) {
+        let alias = rawEvent[nameKey];
+        return aliases[alias];
+    }
+    return rawEvent[nameKey];
+}
+
+function parseEventStart(meta, rawEvent) {
+    let startKey = meta[META_START_KEY] || DEFAULT_START_KEY;
+    return parseEventTimer(startKey, meta, rawEvent);
+}
+
+function parseEventEnd(meta, rawEvent) {
+    let endKey = meta[META_END_KEY] || DEFAULT_END_KEY;
+    return parseEventTimer(endKey, meta, rawEvent);
+}
+
+function parseEventTimer(key, meta, rawEvent) {
+    let encodeRadix = meta[META_VALUE_ENCODE_RADIX];
+    if (encodeRadix) {
+        let encodedValue = rawEvent[key];
+        return parseInt(encodedValue, encodeRadix);
+    }
+    return rawEvent[key];
 }
 
 function convertToMs(value, units) {

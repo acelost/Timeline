@@ -12,13 +12,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val timeline = Timeline("t")
-        timeline.addEvent(TimelineEvent("event1", TimeUnit.SECONDS, 1, 5))
-        timeline.addEvent(TimelineEvent("event2", TimeUnit.MILLISECONDS, 2100, 8000))
-        timeline.addEvent(TimelineEvent("event3", TimeUnit.SECONDS, 9, 10))
-        timeline.addEvent(TimelineEvent("event1", TimeUnit.SECONDS, 5, 6));
-        val transformed = timeline.transform().join(0, TimeUnit.SECONDS).apply()
-        TimelineHelper.print(transformed)
+        val timeline = Timeline("Simple Timeline")
+        for (i in 0 until 80) {
+            val name = "event#${i%10}"
+            timeline.addEvent(TimelineEvent(name, TimeUnit.SECONDS, i.toLong(), (i + 1).toLong()))
+        }
+        TimelineHelper.print(timeline, false)
+        TimelineHelper.print(timeline, true)
         //TimelineHelper.share(this, transformed, "timeline-", null, null)
     }
 }

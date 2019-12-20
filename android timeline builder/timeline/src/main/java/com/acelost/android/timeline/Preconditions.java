@@ -2,6 +2,10 @@ package com.acelost.android.timeline;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public final class Preconditions {
 
     @NonNull
@@ -47,6 +51,15 @@ public final class Preconditions {
             throw new IllegalArgumentException();
         }
         return value;
+    }
+
+    public static <T> void checkUnique(@NonNull final T... values) {
+        if (values.length > 2) {
+            final Set<T> unique = new HashSet<>(Arrays.asList(values));
+            if (unique.size() != values.length) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
 }

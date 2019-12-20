@@ -66,7 +66,7 @@ You can format `Timeline` as json or string:
 
 ```java
 public void printTimeline(Timeline timeline) {
-    JSONObject json = TimelineHelper.toJson(timeline);
+    JSONObject json = TimelineHelper.toJson(timeline, false);
     Log.i("MyTimeline", json.toString());
 }
 ```
@@ -88,7 +88,7 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:0.0.7'
+implementation 'com.acelost.timeline:timeline-builder:0.0.8'
 ```
 
 ## Android Transform API
@@ -136,17 +136,23 @@ public Timeline prepare(Timeline timeline) {
       "units": <'s', 'ms', 'ns'>, // [Optional] Units for event values ('ms' by default)
       "nameKey": <String>, // [Optional] Event name mapping key ('name' by default)
       "startKey": <String>, // [Optional] Event start time mapping key ('start' by default)
-      "endKey": <String> // [Optional] Event end time mapping key ('end' by default)
-      "countKey": <String> // [Optional] Event count mapping key ('count' by default)
+      "endKey": <String>, // [Optional] Event end time mapping key ('end' by default)
+      "countKey": <String>, // [Optional] Event count mapping key ('count' by default)
+      "valueEncodeRadix": <Int> // [Optional] Radix of timer value encoding (undefined by default)
   },
   "events": [
       {
           "<your name key>": <String>, // [Required] Event name
-          "<your start key>": <Long>, // [Required] Event start time
-          "<your end key>": <Long> // [Required] Event end time
+          "<your start key>": <Long/EncodedString>, // [Required] Event start time
+          "<your end key>": <Long/EncodedString> // [Required] Event end time
           "<your count key>": <Int> // [Optional] Event count
       }, ...
-  ]
+  ],
+  "aliases": { // [Optional] Aliases for event names (using for json compression)
+      "<alias-1>": "<event-name-1>",
+      "<alias-2>": "<event-name-2>",
+      ...
+  }
 }
 ```
 

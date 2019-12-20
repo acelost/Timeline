@@ -10,8 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.acelost.android.timeline.serialize.TimelineJsonSerializer;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -26,49 +26,24 @@ import static com.acelost.android.timeline.Preconditions.checkNotNull;
 
 public final class TimelineHelper {
 
-    private static final String KEY_EVENT_NAME = "name";
-    private static final String KEY_EVENT_START = "startMs";
-    private static final String KEY_EVENT_END = "endMs";
-    private static final String KEY_EVENT_COUNT = "count";
-
     @NonNull
-    public static JSONObject toJson(@NonNull final Timeline timeline) {
+    public static JSONObject toJson(@NonNull final Timeline timeline, final boolean compress) {
         checkNotNull(timeline);
-        final JSONObject metaJson = new JSONObject();
-        putSafe(metaJson, "title", timeline.getTitle());
-        putSafe(metaJson, "kind", timeline.getKind().name());
-        putSafe(metaJson, "units", "ms");
-        putSafe(metaJson, "nameKey", KEY_EVENT_NAME);
-        putSafe(metaJson, "startKey", KEY_EVENT_START);
-        putSafe(metaJson, "endKey", KEY_EVENT_END);
-        putSafe(metaJson, "countKey", KEY_EVENT_COUNT);
-        final JSONArray eventsJson = new JSONArray();
-        for (TimelineEvent event : timeline.getEvents()) {
-            final JSONObject eventJson = new JSONObject();
-            putSafe(eventJson, KEY_EVENT_NAME, event.getName());
-            putSafe(eventJson, KEY_EVENT_START, event.getStartMillis());
-            putSafe(eventJson, KEY_EVENT_END, event.getEndMillis());
-            final int count = event.getCount();
-            if (count > 1) {
-                putSafe(eventJson, KEY_EVENT_COUNT, event.getCount());
-            }
-            eventsJson.put(eventJson);
-        }
-        final JSONObject timelineJson = new JSONObject();
-        putSafe(timelineJson, "meta", metaJson);
-        putSafe(timelineJson, "events", eventsJson);
-        return timelineJson;
+        final TimelineJsonSerializer serializer = compress
+                ? new TimelineJsonSerializer("n", "s", "e", "c", true, true)
+                : new TimelineJsonSerializer("name", "start", "end", "count", false, false);
+        return serializer.serialize(timeline);
     }
 
     @NonNull
-    public static String toJsonString(@NonNull final Timeline timeline) {
+    public static String toJsonString(@NonNull final Timeline timeline, final boolean compress) {
         checkNotNull(timeline);
-        return toJson(timeline).toString();
+        return toJson(timeline, compress).toString();
     }
 
-    public static void print(@NonNull final Timeline timeline) {
+    public static void print(@NonNull final Timeline timeline, final boolean compress) {
         checkNotNull(timeline);
-        Log.i("TimelineLog", toJsonString(timeline));
+        Log.i("TimelineLog", toJsonString(timeline, compress));
     }
 
     @NonNull
@@ -78,7 +53,7 @@ public final class TimelineHelper {
                                   @NonNull final File directory) throws IOException {
         checkNotNull(timeline);
         checkAtLeast(prefix, 3);
-        final String timelineString = toJsonString(timeline);
+        final String timelineString = toJsonString(timeline, false);
         final File tempFile = File.createTempFile(prefix, suffix, directory);
         final OutputStream outputStream = new FileOutputStream(tempFile, false);
         try (final Writer writer = new OutputStreamWriter(outputStream)) {
@@ -123,18 +98,6 @@ public final class TimelineHelper {
             e.printStackTrace();
             return false;
         }
-    }
-
-    @NonNull
-    private static JSONObject putSafe(@NonNull final JSONObject object,
-                                      @NonNull final String key,
-                                      @Nullable final Object value) {
-        try {
-            return object.put(key, value);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return object;
     }
 
 }
