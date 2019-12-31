@@ -2,7 +2,7 @@
   "meta": {
     "title": "Timeline Example 1"
   },
-  "events": [
+  "intervals": [
     {
       "name": "Event #1",
       "start": 0,

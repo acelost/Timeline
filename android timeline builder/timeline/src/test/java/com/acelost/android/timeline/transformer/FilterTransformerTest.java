@@ -2,7 +2,7 @@ package com.acelost.android.timeline.transformer;
 
 import androidx.annotation.NonNull;
 
-import com.acelost.android.timeline.TimelineEvent;
+import com.acelost.android.timeline.TimelineInterval;
 import com.acelost.android.timeline.predicate.Predicate;
 import com.acelost.android.timeline.transform.FilterTransformer;
 
@@ -23,40 +23,40 @@ public class FilterTransformerTest {
 
     @Test
     public void assert_returnsSameItemsIfPredicateAlwaysTrue() {
-        final FilterTransformer transformer = new FilterTransformer(new Predicate<TimelineEvent>() {
+        final FilterTransformer transformer = new FilterTransformer(new Predicate<TimelineInterval>() {
             @Override
-            public boolean evaluate(@NonNull TimelineEvent input) {
+            public boolean evaluate(@NonNull TimelineInterval input) {
                 return true;
             }
         });
 
-        final List<TimelineEvent> events = Arrays.asList(
-                new TimelineEvent("event", TimeUnit.SECONDS, 0, 1),
-                new TimelineEvent("event", TimeUnit.SECONDS, 1, 2)
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(0, 1),
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(1, 2)
         );
 
-        final List<TimelineEvent> filtered = transformer.transform(events);
+        final List<TimelineInterval> filtered = transformer.transform(intervals);
 
-        for (TimelineEvent event : events) {
-            assertTrue(filtered.contains(event));
+        for (TimelineInterval interval : intervals) {
+            assertTrue(filtered.contains(interval));
         }
     }
 
     @Test
     public void assert_returnsEmptyListIfPredicateAlwaysFalse() {
-        final FilterTransformer transformer = new FilterTransformer(new Predicate<TimelineEvent>() {
+        final FilterTransformer transformer = new FilterTransformer(new Predicate<TimelineInterval>() {
             @Override
-            public boolean evaluate(@NonNull TimelineEvent input) {
+            public boolean evaluate(@NonNull TimelineInterval input) {
                 return false;
             }
         });
 
-        final List<TimelineEvent> events = Arrays.asList(
-                new TimelineEvent("event", TimeUnit.SECONDS, 0, 1),
-                new TimelineEvent("event", TimeUnit.SECONDS, 1, 2)
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(0, 1),
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(1, 2)
         );
 
-        final List<TimelineEvent> filtered = transformer.transform(events);
+        final List<TimelineInterval> filtered = transformer.transform(intervals);
 
         assertTrue(filtered.isEmpty());
     }

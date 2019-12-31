@@ -2,7 +2,7 @@ package com.acelost.android.timeline.transformer;
 
 import androidx.annotation.NonNull;
 
-import com.acelost.android.timeline.TimelineEvent;
+import com.acelost.android.timeline.TimelineInterval;
 import com.acelost.android.timeline.predicate.BiPredicate;
 import com.acelost.android.timeline.predicate.Predicate;
 import com.acelost.android.timeline.predicate.Predicates;
@@ -21,45 +21,53 @@ public class JoinTransformerTest {
 
     @Test
     public void assert_returnsSameItemsIfJoinPredicateIsAlwaysFalse() {
-        final JoinTransformer transformer = new JoinTransformer(Predicates.<String>alwaysTrue(), new BiPredicate<TimelineEvent, TimelineEvent>() {
-            @Override
-            public boolean evaluate(@NonNull TimelineEvent input1, @NonNull TimelineEvent input2) {
-                return false;
-            }
-        });
-
-        final List<TimelineEvent> events = Arrays.asList(
-                new TimelineEvent("event", TimeUnit.SECONDS, 0, 1),
-                new TimelineEvent("event", TimeUnit.SECONDS, 1, 2)
+        final JoinTransformer transformer = new JoinTransformer(
+                Predicates.<String>alwaysTrue(),
+                Predicates.<String>alwaysTrue(),
+                new BiPredicate<TimelineInterval, TimelineInterval>() {
+                    @Override
+                    public boolean evaluate(@NonNull TimelineInterval input1, @NonNull TimelineInterval input2) {
+                        return false;
+                    }
+                }
         );
 
-        final List<TimelineEvent> joined = transformer.transform(events);
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(0, 1),
+                TimelineInterval.builder("interval", TimeUnit.SECONDS).build(1, 2)
+        );
 
-        for (TimelineEvent event : events) {
-            assertTrue(joined.contains(event));
+        final List<TimelineInterval> joined = transformer.transform(intervals);
+
+        for (TimelineInterval interval : intervals) {
+            assertTrue(joined.contains(interval));
         }
     }
 
     @Test
     public void assert_returnsSingleItemIfJoinPredicateIsAlwaysTrue() {
-        final JoinTransformer transformer = new JoinTransformer(Predicates.<String>alwaysTrue(), new BiPredicate<TimelineEvent, TimelineEvent>() {
-            @Override
-            public boolean evaluate(@NonNull TimelineEvent input1, @NonNull TimelineEvent input2) {
-                return true;
-            }
-        });
+        final JoinTransformer transformer = new JoinTransformer(
+                Predicates.<String>alwaysTrue(),
+                Predicates.<String>alwaysTrue(),
+                new BiPredicate<TimelineInterval, TimelineInterval>() {
+                    @Override
+                    public boolean evaluate(@NonNull TimelineInterval input1, @NonNull TimelineInterval input2) {
+                        return true;
+                    }
+                }
+        );
 
         final long start = 0;
         final long end = 10;
         final TimeUnit units = TimeUnit.MILLISECONDS;
-        final List<TimelineEvent> events = Arrays.asList(
-                new TimelineEvent("event", units, start, 1),
-                new TimelineEvent("event", units, 3, 4),
-                new TimelineEvent("event", units, 5, 7),
-                new TimelineEvent("event", units, 9, end)
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", units).build(start, 1),
+                TimelineInterval.builder("interval", units).build(3, 4),
+                TimelineInterval.builder("interval", units).build(5, 7),
+                TimelineInterval.builder("interval", units).build(9, end)
         );
 
-        final List<TimelineEvent> joined = transformer.transform(events);
+        final List<TimelineInterval> joined = transformer.transform(intervals);
 
         assertEquals(joined.size(), 1);
         assertEquals(joined.get(0).getStartMillis(), start);
@@ -75,24 +83,56 @@ public class JoinTransformerTest {
                         return false;
                     }
                 },
-                new BiPredicate<TimelineEvent, TimelineEvent>() {
+                Predicates.<String>alwaysTrue(),
+                new BiPredicate<TimelineInterval, TimelineInterval>() {
                     @Override
-                    public boolean evaluate(@NonNull TimelineEvent input1, @NonNull TimelineEvent input2) {
+                    public boolean evaluate(@NonNull TimelineInterval input1, @NonNull TimelineInterval input2) {
                         return true;
                     }
                 }
         );
 
         final TimeUnit units = TimeUnit.MILLISECONDS;
-        final List<TimelineEvent> events = Arrays.asList(
-                new TimelineEvent("event", units, 0, 1),
-                new TimelineEvent("event", units, 1, 2)
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", units).build(0, 1),
+                TimelineInterval.builder("interval", units).build(1, 2)
         );
 
-        final List<TimelineEvent> joined = transformer.transform(events);
+        final List<TimelineInterval> joined = transformer.transform(intervals);
 
-        for (TimelineEvent event : events) {
-            assertTrue(joined.contains(event));
+        for (TimelineInterval interval : intervals) {
+            assertTrue(joined.contains(interval));
+        }
+    }
+
+    @Test
+    public void assert_returnsSameItemsIfGroupPredicateAlwaysFalse() {
+        final JoinTransformer transformer = new JoinTransformer(
+                Predicates.<String>alwaysTrue(),
+                new Predicate<String>() {
+                    @Override
+                    public boolean evaluate(@NonNull String input) {
+                        return false;
+                    }
+                },
+                new BiPredicate<TimelineInterval, TimelineInterval>() {
+                    @Override
+                    public boolean evaluate(@NonNull TimelineInterval input1, @NonNull TimelineInterval input2) {
+                        return true;
+                    }
+                }
+        );
+
+        final TimeUnit units = TimeUnit.MILLISECONDS;
+        final List<TimelineInterval> intervals = Arrays.asList(
+                TimelineInterval.builder("interval", units).group("group").build(0, 1),
+                TimelineInterval.builder("interval", units).group("group").build(1, 2)
+        );
+
+        final List<TimelineInterval> joined = transformer.transform(intervals);
+
+        for (TimelineInterval interval : intervals) {
+            assertTrue(joined.contains(interval));
         }
     }
 

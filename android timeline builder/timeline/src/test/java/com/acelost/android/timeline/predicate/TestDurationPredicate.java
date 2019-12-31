@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestDurationPredicate extends DurationPredicate {
 
-    private Long eventDuration;
+    private Long intervalDuration;
     private Long conditionDuration;
 
     public TestDurationPredicate(long duration, @NonNull TimeUnit units) {
@@ -14,14 +14,14 @@ public class TestDurationPredicate extends DurationPredicate {
     }
 
     @Override
-    protected boolean evaluate(long eventDuration, long conditionDuration) {
-        this.eventDuration = eventDuration;
+    protected boolean evaluate(long intervalDuration, long conditionDuration) {
+        this.intervalDuration = intervalDuration;
         this.conditionDuration = conditionDuration;
         return false;
     }
 
-    public long eventDuration() {
-        return eventDuration;
+    public long intervalDuration() {
+        return intervalDuration;
     }
 
     public long conditionDuration() {

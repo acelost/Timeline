@@ -3,9 +3,9 @@ package com.acelost.android.timeline.transform;
 import androidx.annotation.NonNull;
 
 import com.acelost.android.timeline.Timeline;
-import com.acelost.android.timeline.TimelineEvent;
+import com.acelost.android.timeline.TimelineInterval;
 import com.acelost.android.timeline.predicate.BiPredicate;
-import com.acelost.android.timeline.predicate.EventProximityPredicate;
+import com.acelost.android.timeline.predicate.IntervalProximityPredicate;
 import com.acelost.android.timeline.predicate.DurationPredicate;
 import com.acelost.android.timeline.predicate.Predicate;
 import com.acelost.android.timeline.predicate.Predicates;
@@ -33,7 +33,7 @@ public final class TimelineTransformBuilder {
     }
 
     @NonNull
-    public TimelineTransformBuilder filter(@NonNull final Predicate<TimelineEvent> predicate) {
+    public TimelineTransformBuilder filter(@NonNull final Predicate<TimelineInterval> predicate) {
         return compose(new FilterTransformer(checkNotNull(predicate)));
     }
 
@@ -41,8 +41,8 @@ public final class TimelineTransformBuilder {
     public TimelineTransformBuilder filterMinDuration(final long duration, @NonNull final TimeUnit units) {
         return filter(new DurationPredicate(duration, checkNotNull(units)) {
             @Override
-            protected boolean evaluate(long eventDuration, long conditionDuration) {
-                return eventDuration >= conditionDuration;
+            protected boolean evaluate(long intervalDuration, long conditionDuration) {
+                return intervalDuration >= conditionDuration;
             }
         });
     }
@@ -51,36 +51,42 @@ public final class TimelineTransformBuilder {
     public TimelineTransformBuilder filterMaxDuration(final long duration, @NonNull final TimeUnit units) {
         return filter(new DurationPredicate(duration, checkNotNull(units)) {
             @Override
-            protected boolean evaluate(long eventDuration, long conditionDuration) {
-                return eventDuration <= conditionDuration;
+            protected boolean evaluate(long intervalDuration, long conditionDuration) {
+                return intervalDuration <= conditionDuration;
             }
         });
     }
 
     @NonNull
     public TimelineTransformBuilder join(@NonNull final Predicate<String> namePredicate,
-                                         @NonNull final BiPredicate<TimelineEvent, TimelineEvent> joinPredicate) {
-        return compose(new JoinTransformer(namePredicate, joinPredicate));
-    }
-
-    @NonNull
-    public TimelineTransformBuilder join(final long distance, @NonNull final TimeUnit units, final String... names) {
-        return join(Predicates.in(names), new EventProximityPredicate(distance, units));
+                                         @NonNull final Predicate<String> groupPredicate,
+                                         @NonNull final BiPredicate<TimelineInterval, TimelineInterval> joinPredicate) {
+        return compose(new JoinTransformer(namePredicate, groupPredicate, joinPredicate));
     }
 
     @NonNull
     public TimelineTransformBuilder join(final long distance, @NonNull final TimeUnit units) {
-        return join(Predicates.<String>alwaysTrue(), new EventProximityPredicate(distance, checkNotNull(units)));
+        return join(Predicates.<String>alwaysTrue(), Predicates.<String>alwaysTrue(), new IntervalProximityPredicate(distance, checkNotNull(units)));
+    }
+
+    @NonNull
+    public TimelineTransformBuilder joinForNames(final long distance, @NonNull final TimeUnit units, @NonNull final String... names) {
+        return join(Predicates.in(names), Predicates.<String>alwaysTrue(), new IntervalProximityPredicate(distance, units));
+    }
+
+    @NonNull
+    public TimelineTransformBuilder joinForGroups(final long distance, @NonNull final TimeUnit units, @NonNull final String... groups) {
+        return join(Predicates.<String>alwaysTrue(), Predicates.in(groups), new IntervalProximityPredicate(distance, units));
     }
 
     @NonNull
     public Timeline apply() {
-        List<TimelineEvent> events = new ArrayList<>(timeline.getEvents());
+        List<TimelineInterval> intervals = new ArrayList<>(timeline.getIntervals());
         for (TimelineTransformer transformer : transformers) {
-            events = transformer.transform(events);
+            intervals = transformer.transform(intervals);
         }
         final Timeline transformed = new Timeline(timeline.getTitle(), timeline.getKind());
-        transformed.addEvents(events);
+        transformed.addIntervals(intervals);
         return transformed;
     }
 

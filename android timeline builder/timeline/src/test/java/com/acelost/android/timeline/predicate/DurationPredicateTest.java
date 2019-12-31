@@ -1,6 +1,6 @@
 package com.acelost.android.timeline.predicate;
 
-import com.acelost.android.timeline.TimelineEvent;
+import com.acelost.android.timeline.TimelineInterval;
 
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public class DurationPredicateTest {
     public void assert_throwsExceptionIfDurationIsNegative() {
         new DurationPredicate(-1, TimeUnit.SECONDS) {
             @Override
-            protected boolean evaluate(long eventDuration, long conditionDuration) {
+            protected boolean evaluate(long intervalDuration, long conditionDuration) {
                 return false;
             }
         };
@@ -24,30 +24,30 @@ public class DurationPredicateTest {
     public void assert_throwsExceptionIfUnitsIsNull() {
         new DurationPredicate(0, null) {
             @Override
-            protected boolean evaluate(long eventDuration, long conditionDuration) {
+            protected boolean evaluate(long intervalDuration, long conditionDuration) {
                 return false;
             }
         };
     }
 
     @Test
-    public void assert_eventDurationValue() {
+    public void assert_intervalDurationValue() {
         final TimeUnit units = TimeUnit.SECONDS;
         final long start = 5;
         final long threshold = 2;
-        final TimelineEvent event1 = new TimelineEvent("event", units, start, start + threshold - 1);
-        final TimelineEvent event2 = new TimelineEvent("event", units, start, start + threshold);
-        final TimelineEvent event3 = new TimelineEvent("event", units, start, start + threshold + 1);
+        final TimelineInterval interval1 = TimelineInterval.builder("interval", units).build(start, start + threshold - 1);
+        final TimelineInterval interval2 = TimelineInterval.builder("interval", units).build(start, start + threshold);
+        final TimelineInterval interval3 = TimelineInterval.builder("interval", units).build(start, start + threshold + 1);
         final TestDurationPredicate predicate = new TestDurationPredicate(2, units);
 
-        predicate.evaluate(event1);
-        assertTrue(predicate.eventDuration() < predicate.conditionDuration());
+        predicate.evaluate(interval1);
+        assertTrue(predicate.intervalDuration() < predicate.conditionDuration());
 
-        predicate.evaluate(event2);
-        assertTrue(predicate.eventDuration() == predicate.conditionDuration());
+        predicate.evaluate(interval2);
+        assertTrue(predicate.intervalDuration() == predicate.conditionDuration());
 
-        predicate.evaluate(event3);
-        assertTrue(predicate.eventDuration() > predicate.conditionDuration());
+        predicate.evaluate(interval3);
+        assertTrue(predicate.intervalDuration() > predicate.conditionDuration());
     }
 
 }

@@ -14,7 +14,7 @@
   "meta": {
     "title": "My first timeline"
   },
-  "events": [
+  "intervals": [
     {
       "name": "Event1",
       "start": 1000,
@@ -56,8 +56,8 @@ Use simple `Timeline` builder in your android application:
 ```java
 public Timeline buildTimeline() {
     Timeline timeline = new Timeline("my first timeline");
-    timeline.addEvent(new TimelineEvent("e1", TimeUnit.SECONDS, 0, 1));
-    timeline.addEvent(new TimelineEvent("e2", TimeUnit.SECONDS, 1, 4));
+    timeline.addInterval(TimelineInterval.builder("i1", TimeUnit.SECONDS).build(0, 1));
+    timeline.addInterval(TimelineInterval.builder("i2", TimeUnit.SECONDS).build(1, 4));
     return timeline;
 }
 ```
@@ -88,31 +88,31 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:0.0.9'
+implementation 'com.acelost.timeline:timeline-builder:0.1.0'
 ```
 
 ## Android Transform API
 
 Transform API allows to prepare your timeline for rendering.
 
-1. You can filter events in timeline:
+1. You can filter intervals in timeline:
 ```java
 public Timeline prepare(Timeline timeline) {
     return timeline.transform()
             .filter(new MyPredicate())
             //.filterMinDuration(1, TimeUnit.SECOND)
-            //.filterMaxDuration(10, TimeUnit.SECOND
+            //.filterMaxDuration(10, TimeUnit.SECOND)
             .apply();
 }
 ```
 
-2. You can join events with same name:
+2. You can join intervals with same name:
 ```java
 public Timeline prepare(Timeline timeline) {
     return timeline.transform()
-            .join(new MyNamePredicate(), new MyJoinPredicate())
+            .join(new MyNamePredicate(), new MyGroupPredicate(), new MyJoinPredicate())
             //.join(10, TimeUnit.MILLISECONDS)
-            //.join(10, TimeUnit.MILLISECONDS, "Event7")
+            //.join(10, TimeUnit.MILLISECONDS, "MyInterval")
             .apply();
 }
 ```
@@ -133,26 +133,28 @@ public Timeline prepare(Timeline timeline) {
   "meta": {
       "title": <String>, // [Required] Chart title
       "kind": <'ABSOLUTE', 'RELATIVE'>, // [Optional] Chart kind ('ABSOLUTE' by default)
-      "units": <'s', 'ms', 'ns'>, // [Optional] Units for event values ('ms' by default)
-      "nameKey": <String>, // [Optional] Event name mapping key ('name' by default)
-      "startKey": <String>, // [Optional] Event start time mapping key ('start' by default)
-      "endKey": <String>, // [Optional] Event end time mapping key ('end' by default)
-      "countKey": <String>, // [Optional] Event count mapping key ('count' by default)
-      "payloadKey": <String>, // [Optional] Event payload mapping key ('payload' by default)
+      "units": <'s', 'ms', 'ns'>, // [Optional] Units for time values ('ms' by default)
+      "nameKey": <String>, // [Optional] Interval name mapping key ('name' by default)
+      "groupKey": <String>, // [Optional] Interval group mapping key ('group' by default)
+      "startKey": <String>, // [Optional] Interval start time mapping key ('start' by default)
+      "endKey": <String>, // [Optional] Interval end time mapping key ('end' by default)
+      "countKey": <String>, // [Optional] Interval count mapping key ('count' by default)
+      "payloadKey": <String>, // [Optional] Interval payload mapping key ('payload' by default)
       "valueEncodeRadix": <Int> // [Optional] Radix of timer value encoding (undefined by default)
   },
-  "events": [
+  "intervals": [
       {
-          "<your name key>": <String>, // [Required] Event name
-          "<your start key>": <Long/EncodedString>, // [Required] Event start time
-          "<your end key>": <Long/EncodedString>, // [Required] Event end time
-          "<your count key>": <Int>, // [Optional] Event count
-          "<your payload key>": <String> // [Optional] Event payload
+          "<your name key>": <String>, // [Required] Interval name
+          "<your group key>": <String>, // [Optional] Interval group
+          "<your start key>": <Long/EncodedString>, // [Required] Interval start time
+          "<your end key>": <Long/EncodedString>, // [Required] Interval end time
+          "<your count key>": <Int>, // [Optional] Interval count
+          "<your payload key>": <String> // [Optional] Interval payload
       }, ...
   ],
-  "aliases": { // [Optional] Aliases for event names (using for json compression)
-      "<alias-1>": "<event-name-1>",
-      "<alias-2>": "<event-name-2>",
+  "aliases": { // [Optional] Aliases for interval names and groups (using for json compression)
+      "<alias-1>": "<interval-name-1>",
+      "<alias-2>": "<interval-name-2>",
       ...
   }
 }

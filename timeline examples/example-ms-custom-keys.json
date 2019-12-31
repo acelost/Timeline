@@ -5,7 +5,7 @@
     "startKey": "startMs",
     "endKey": "endMs"
   },
-  "events": [
+  "intervals": [
     {
       "eventName": "Event #1",
       "startMs": 0,

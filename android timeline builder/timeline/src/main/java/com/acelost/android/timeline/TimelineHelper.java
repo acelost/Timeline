@@ -30,8 +30,8 @@ public final class TimelineHelper {
     public static JSONObject toJson(@NonNull final Timeline timeline, final boolean compress) {
         checkNotNull(timeline);
         final TimelineJsonSerializer serializer = compress
-                ? new TimelineJsonSerializer("n", "s", "e", "c", "p", true, true)
-                : new TimelineJsonSerializer("name", "start", "end", "count", "payload", false, false);
+                ? new TimelineJsonSerializer("n", "g", "s", "e", "c", "p", true, true)
+                : new TimelineJsonSerializer("name", "group", "start", "end", "count", "payload", false, false);
         return serializer.serialize(timeline);
     }
 

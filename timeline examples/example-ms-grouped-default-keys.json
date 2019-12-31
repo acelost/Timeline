@@ -1,16 +1,21 @@
 {
   "meta": {
-    "title": "Timeline Example 1",
-    "kind": "RELATIVE"
+    "title": "Timeline Example 1"
   },
   "intervals": [
     {
       "name": "Event #1",
-      "start": 50,
+      "start": 0,
       "end": 100
     },{
-      "name": "Event #2",
+      "name": "Event #2`",
+      "group": "Group #2",
       "start": 100,
+      "end": 200
+    },{
+      "name": "Event #2``",
+      "group": "Group #2",
+      "start": 200,
       "end": 250
     },{
       "name": "Event #3",

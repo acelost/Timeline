@@ -2,13 +2,13 @@ package com.acelost.android.timeline.transform;
 
 import androidx.annotation.NonNull;
 
-import com.acelost.android.timeline.TimelineEvent;
+import com.acelost.android.timeline.TimelineInterval;
 
 import java.util.List;
 
 public interface TimelineTransformer {
 
     @NonNull
-    List<TimelineEvent> transform(@NonNull List<TimelineEvent> events);
+    List<TimelineInterval> transform(@NonNull List<TimelineInterval> intervals);
 
 }
