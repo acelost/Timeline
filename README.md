@@ -51,13 +51,6 @@ Resulting timeline looks so:
  * Copy timeline json and paste it (Ctrl+V)
  * Pass encoded to base64 timeline json to query parameter `timeline` ([example](https://acelost.github.io?source=aGVsbG8=&timeline=ewogICJtZXRhIjogewogICAgInRpdGxlIjogIk15IGZpcnN0IHRpbWVsaW5lIgogIH0sCiAgImludGVydmFscyI6IFsKICAgIHsKICAgICAgIm5hbWUiOiAiRXZlbnQxIiwKICAgICAgInN0YXJ0IjogMTAwMCwKICAgICAgImVuZCI6IDIwMDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MiIsCiAgICAgICJzdGFydCI6IDUwMCwKICAgICAgImVuZCI6IDI1MDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MyIsCiAgICAgICJzdGFydCI6IDEwMDAsCiAgICAgICJlbmQiOiAxNTAwCiAgICB9LAogICAgewogICAgICAibmFtZSI6ICJFdmVudDEiLAogICAgICAic3RhcnQiOiAyMTAwLAogICAgICAiZW5kIjogMjQwMAogICAgfQogIF0KfQ==))
 
-1. Download [timeline html viewer](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/acelost/Timeline/tree/master/html%20timeline%20viewer)
-2. Open `timeline.html` file in your browser
-3. Provide your timeline json to page
- * Drop file with timeline on page 
- * Copy timeline json and paste it (Ctrl+V)
- * Pass encoded to base64 timeline json to query parameter `timeline` ([example](https://acelost.github.io?source=aGVsbG8=&timeline=ewogICJtZXRhIjogewogICAgInRpdGxlIjogIk15IGZpcnN0IHRpbWVsaW5lIgogIH0sCiAgImludGVydmFscyI6IFsKICAgIHsKICAgICAgIm5hbWUiOiAiRXZlbnQxIiwKICAgICAgInN0YXJ0IjogMTAwMCwKICAgICAgImVuZCI6IDIwMDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MiIsCiAgICAgICJzdGFydCI6IDUwMCwKICAgICAgImVuZCI6IDI1MDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MyIsCiAgICAgICJzdGFydCI6IDEwMDAsCiAgICAgICJlbmQiOiAxNTAwCiAgICB9LAogICAgewogICAgICAibmFtZSI6ICJFdmVudDEiLAogICAgICAic3RhcnQiOiAyMTAwLAogICAgICAiZW5kIjogMjQwMAogICAgfQogIF0KfQ==))
-
 ## Builder for Android
 
 Use simple `Timeline` builder in your android application:
