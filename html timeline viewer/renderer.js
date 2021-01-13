@@ -9,6 +9,7 @@ const META_START_KEY = 'startKey';
 const META_END_KEY = 'endKey';
 const META_COUNT_KEY = 'countKey';
 const META_PAYLOAD_KEY = 'payloadKey';
+const META_REDIRECT_KEY = 'redirectKey';
 
 const TIMELINE_KIND_ABSOLUTE = "ABSOLUTE";
 const TIMELINE_KIND_RELATIVE = "RELATIVE";
@@ -20,6 +21,7 @@ const DEFAULT_START_KEY = 'start';
 const DEFAULT_END_KEY = 'end';
 const DEFAULT_COUNT_KEY = 'count';
 const DEFAULT_PAYLOAD_KEY = 'payload';
+const DEFAULT_REDIRECT_KEY = 'redirect';
 
 const INTERVAL_NAME = 'name';
 const INTERVAL_GROUP = 'group';
@@ -27,6 +29,7 @@ const INTERVAL_START = 'start';
 const INTERVAL_END = 'end';
 const INTERVAL_COUNT = 'count';
 const INTERVAL_PAYLOAD = 'payload';
+const INTERVAL_REDIRECT = 'redirect';
 
 const SEQUENCE_NAME = 'name';
 const SEQUENCE_GROUPED_BY = 'groupedBy';
@@ -38,6 +41,7 @@ const SEQUENCE_GROUP_TYPE_GROUP = 'group';
 const POINT_NAME = 'name';
 const POINT_COUNT = 'count';
 const POINT_PAYLOAD = 'payload';
+const POINT_REDIRECT = 'redirect';
 
 const CHART_HEADER_HEIGHT = 100;
 const CHART_FOOTER_HEIGHT = 50;
@@ -88,13 +92,15 @@ function handleTimeline(timelineJson) {
             let end = interval[INTERVAL_END];
             let count = interval[INTERVAL_COUNT];
             let payload = interval[INTERVAL_PAYLOAD];
+            let redirect = interval[INTERVAL_REDIRECT];
             let data = {
                 x: start,
                 x2: end,
                 y: i,
                 name: interval[INTERVAL_NAME], // POINT_NAME
                 count: count, // POINT_COUNT
-                payload: payload // POINT_PAYLOAD
+                payload: payload, // POINT_PAYLOAD
+                redirect: redirect // POINT_REDIRECT
             };
             points.push(data);
         }
@@ -114,6 +120,7 @@ function parseIntervals(meta, aliases, rawIntervals) {
         parsedInterval[INTERVAL_END] = convertToMs(parseIntervalEnd(meta, rawInterval), units);
         parsedInterval[INTERVAL_COUNT] = parseCount(meta, rawInterval);
         parsedInterval[INTERVAL_PAYLOAD] = parsePayload(meta, rawInterval);
+        parsedInterval[INTERVAL_REDIRECT] = parseRedirect(meta, rawInterval);
         parsedIntervals.push(parsedInterval);
     }
     return parsedIntervals;
@@ -168,6 +175,11 @@ function parseIntervalTimer(key, meta, rawInterval) {
 function parsePayload(meta, rawInterval) {
     let payloadKey = meta[META_PAYLOAD_KEY] || DEFAULT_PAYLOAD_KEY;
     return rawInterval[payloadKey];
+}
+
+function parseRedirect(meta, rawInterval) {
+    let redirectKey = meta[META_REDIRECT_KEY] || DEFAULT_REDIRECT_KEY;
+    return rawInterval[redirectKey];
 }
 
 function convertToMs(value, units) {
@@ -290,12 +302,22 @@ function formatTooltip() {
     let nameString = count > 1
         ? (name + ' (join ' + count + ')')
         : (name);
-    let mainInfo = '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + nameString + '</b> ' + duration + ' ms<br/>';
+    let pointInfo = '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + nameString + '</b> ' + duration + ' ms<br/>';
     let payload = point['point'][POINT_PAYLOAD];
     if (payload) {
-        return mainInfo + '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>payload: </b>' + payload + '<br/>';
-    } else {
-        return mainInfo;
+        pointInfo =+ '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>payload: </b>' + payload + '<br/>';
+    }
+    let redirect = point['point'][POINT_REDIRECT];
+    if (redirect) {
+        pointInfo += '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>redirect: </b>' + redirect + '<br/>';
+    }
+    return pointInfo;
+}
+
+function handleOnEventClick(event) {
+    let redirectUrl = event.point[POINT_REDIRECT];
+    if (redirectUrl) {
+        location.href = redirectUrl;
     }
 }
 
@@ -329,6 +351,9 @@ function renderTimeline(source, title, sequenceCount, categories, points) {
                 dataLabels: {
                     enabled: true,
                     inside: true
+                },
+                events: {
+                    click: handleOnEventClick
                 }
             }
         },

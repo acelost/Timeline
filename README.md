@@ -143,6 +143,7 @@ public Timeline prepare(Timeline timeline) {
       "endKey": <String>, // [Optional] Interval end time mapping key ('end' by default)
       "countKey": <String>, // [Optional] Interval count mapping key ('count' by default)
       "payloadKey": <String>, // [Optional] Interval payload mapping key ('payload' by default)
+      "redirectKey": <String>, // [Optional] Interval redirect mapping key ('redirect' by default)
       "valueEncodeRadix": <Int> // [Optional] Radix of timer value encoding (undefined by default)
   },
   "intervals": [
@@ -153,6 +154,7 @@ public Timeline prepare(Timeline timeline) {
           "<your end key>": <Long/EncodedString>, // [Required] Interval end time
           "<your count key>": <Int>, // [Optional] Interval count
           "<your payload key>": <String> // [Optional] Interval payload
+          "<your redirect key>": <String> // [Optional] Interval redirect
       }, ...
   ],
   "aliases": { // [Optional] Aliases for interval names and groups (using for json compression)
