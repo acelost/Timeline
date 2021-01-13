@@ -1,6 +1,7 @@
 const META_TITLE = 'title';
 const META_KIND = 'kind';
 const META_UNITS = 'units';
+const META_SPLIT_SAME_NAMED = 'splitSameNamed';
 const META_VALUE_ENCODE_RADIX = 'valueEncodeRadix';
 const META_NAME_KEY = 'nameKey';
 const META_GROUP_KEY = 'groupKey';
@@ -65,13 +66,14 @@ function handleTimeline(timelineJson) {
     let meta = timelineJson['meta'];
     let title = meta[META_TITLE];
     let kind = meta[META_KIND];
+    let splitSameNamed = meta[META_SPLIT_SAME_NAMED] || false;
 
     let intervals = parseIntervals(meta, aliases, timelineJson['intervals']);
     if (kind == TIMELINE_KIND_RELATIVE) {
         convertToRelative(intervals);
     }
 
-    let sequences = prepareOrderedSequences(intervals);
+    let sequences = prepareOrderedSequences(intervals, splitSameNamed);
     let categories = [];
     let points = [];
     for (var i = 0; i < sequences.length; i++) {
@@ -193,7 +195,7 @@ function convertToRelative(intervals) {
     }
 }
 
-function prepareOrderedSequences(intervals) {
+function prepareOrderedSequences(intervals, splitSameNamed) {
     intervals.sort(intervalComparator); // To guarantee asc order of intervals in sequence
     let groupedSequenceMap = new Map();
     let namedSequenceMap = new Map();
@@ -216,19 +218,29 @@ function prepareOrderedSequences(intervals) {
         sequence.push(interval);
     }
     let sequences = [];
-    sequences.push(...toSequences(groupedSequenceMap, SEQUENCE_GROUP_TYPE_GROUP));
-    sequences.push(...toSequences(namedSequenceMap, SEQUENCE_GROUP_TYPE_NAME));
+    sequences.push(...toSequences(groupedSequenceMap, SEQUENCE_GROUP_TYPE_GROUP, false));
+    sequences.push(...toSequences(namedSequenceMap, SEQUENCE_GROUP_TYPE_NAME, splitSameNamed));
     return sequences.sort(sequenceComparator);
 }
 
-function toSequences(sequenceMap, groupedBy) {
+function toSequences(sequenceMap, groupedBy, splitSequences) {
     let sequences = [];
     for (var [key, intervals] of sequenceMap) {
-        let sequence = {};
-        sequence[SEQUENCE_NAME] = key;
-        sequence[SEQUENCE_GROUPED_BY] = groupedBy;
-        sequence[SEQUENCE_INTERVALS] = intervals;
-        sequences.push(sequence);
+        if (splitSequences) {
+            for (var interval of intervals) {
+                let sequence = {};
+                sequence[SEQUENCE_NAME] = key;
+                sequence[SEQUENCE_GROUPED_BY] = groupedBy;
+                sequence[SEQUENCE_INTERVALS] = [interval];
+                sequences.push(sequence);        
+            }
+        } else {
+            let sequence = {};
+            sequence[SEQUENCE_NAME] = key;
+            sequence[SEQUENCE_GROUPED_BY] = groupedBy;
+            sequence[SEQUENCE_INTERVALS] = intervals;
+            sequences.push(sequence);
+        }
     }
     return sequences;
 }

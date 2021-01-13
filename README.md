@@ -136,6 +136,7 @@ public Timeline prepare(Timeline timeline) {
       "title": <String>, // [Required] Chart title
       "kind": <'ABSOLUTE', 'RELATIVE'>, // [Optional] Chart kind ('ABSOLUTE' by default)
       "units": <'s', 'ms', 'ns'>, // [Optional] Units for time values ('ms' by default)
+      "splitSameNamed": <Boolean>, // [Optional] Split same named events to different lines (false by default)
       "nameKey": <String>, // [Optional] Interval name mapping key ('name' by default)
       "groupKey": <String>, // [Optional] Interval group mapping key ('group' by default)
       "startKey": <String>, // [Optional] Interval start time mapping key ('start' by default)
