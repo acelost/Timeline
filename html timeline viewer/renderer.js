@@ -303,9 +303,10 @@ function formatTooltip() {
         ? (name + ' (join ' + count + ')')
         : (name);
     let pointInfo = '<span style="color:' + point.color + '">●</span><pre>    </pre><b>' + nameString + '</b> ' + duration + ' ms<br/>';
-    let payload = point['point'][POINT_PAYLOAD];
+    pointInfo += '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>[range]</b> ' + point.x + '−' + point.x2 + ' ms<br/>';
+    let payload = point['point'][POINT_PAYLOAD];    
     if (payload) {
-        pointInfo =+ '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>payload: </b>' + payload + '<br/>';
+        pointInfo += '<span style="color:' + '#fff' + '">●</span><pre>    </pre><b>payload: </b>' + payload + '<br/>';
     }
     let redirect = point['point'][POINT_REDIRECT];
     if (redirect) {
