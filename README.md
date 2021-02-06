@@ -45,10 +45,11 @@ Resulting timeline looks so:
 
 ## How to use
 
-1. Visit [github.io page](https://acelost.github.io/)
+1. Visit [acelost.github.io page](https://acelost.github.io/)
 2. Provide your timeline json to page
  * Drop file with timeline on page 
  * Copy timeline json and paste it (Ctrl+V)
+ * Pass bin identifier from jsonbin.io to query parameter `jsonbinio` ([example](https://acelost.github.io?jsonbinio=601e49a6d5aafc6431a4a418))
  * Pass encoded to base64 timeline json to query parameter `timeline` ([example](https://acelost.github.io?source=aGVsbG8=&timeline=ewogICJtZXRhIjogewogICAgInRpdGxlIjogIk15IGZpcnN0IHRpbWVsaW5lIgogIH0sCiAgImludGVydmFscyI6IFsKICAgIHsKICAgICAgIm5hbWUiOiAiRXZlbnQxIiwKICAgICAgInN0YXJ0IjogMTAwMCwKICAgICAgImVuZCI6IDIwMDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MiIsCiAgICAgICJzdGFydCI6IDUwMCwKICAgICAgImVuZCI6IDI1MDAKICAgIH0sCiAgICB7CiAgICAgICJuYW1lIjogIkV2ZW50MyIsCiAgICAgICJzdGFydCI6IDEwMDAsCiAgICAgICJlbmQiOiAxNTAwCiAgICB9LAogICAgewogICAgICAibmFtZSI6ICJFdmVudDEiLAogICAgICAic3RhcnQiOiAyMTAwLAogICAgICAiZW5kIjogMjQwMAogICAgfQogIF0KfQ==))
 
 ## Builder for Android

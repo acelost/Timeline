@@ -2,12 +2,32 @@ document.addEventListener('DOMContentLoaded', function () {
     let queryParams = (new URL(document.location)).searchParams;
     let base64Source = queryParams.get("source");
     let base64Timeline = queryParams.get("timeline");
+    let jsonbinio = queryParams.get("jsonbinio");
+    let sourceString = base64Source ? atob(base64Source) : "anonymous";
     if (base64Timeline != null) {
-        let sourceString = base64Source ? atob(base64Source) : "anonymous";
         let timelineString = atob(base64Timeline);
         let timelineJson = JSON.parse(timelineString);
         timelineJson["source"] = sourceString;
         handleTimeline(timelineJson);
+    } else if (jsonbinio != null) {
+        const request = new XMLHttpRequest();
+        const url = 'https://api.jsonbin.io/b/' + jsonbinio;
+        request.open('GET', url);
+        request.send();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    let timelineJson = JSON.parse(request.responseText);
+                    timelineJson["source"] = sourceString;
+                    handleTimeline(timelineJson);
+                } else {
+                    let jsonbinioMessage = JSON.parse(request.responseText)['message'];
+                    let userMessage = `Failed to load jsonbin ${jsonbinio}. ${jsonbinioMessage}.`;
+                    console.log(userMessage);
+                    alert(userMessage);
+                }
+            }
+        }
     }
 });
 
