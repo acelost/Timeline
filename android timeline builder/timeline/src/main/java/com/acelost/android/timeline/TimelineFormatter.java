@@ -11,8 +11,8 @@ public final class TimelineFormatter {
     public static JSONObject toJson(@NonNull final Timeline timeline, final boolean compress) {
         checkNotNull(timeline);
         final TimelineJsonSerializer serializer = compress
-                ? new TimelineJsonSerializer("n", "g", "s", "e", "c", "p", true, true)
-                : new TimelineJsonSerializer("name", "group", "start", "end", "count", "payload", false, false);
+                ? new TimelineJsonSerializer("n", "g", "s", "e", "c", "p", "r", true, true)
+                : new TimelineJsonSerializer("name", "group", "start", "end", "count", "payload", "redirect", false, false);
         return serializer.serialize(timeline);
     }
 

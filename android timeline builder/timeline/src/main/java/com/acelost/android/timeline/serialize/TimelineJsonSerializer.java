@@ -24,6 +24,7 @@ public final class TimelineJsonSerializer {
     private final String endKey;
     private final String countKey;
     private final String payloadKey;
+    private final String redirectKey;
     private final boolean compressIntervalIdentifiers;
     private final boolean compressIntervalTimers;
 
@@ -34,6 +35,7 @@ public final class TimelineJsonSerializer {
             @NonNull final String endKey,
             @NonNull final String countKey,
             @NonNull final String payloadKey,
+            @NonNull final String redirectKey,
             final boolean compressIntervalIdentifiers,
             final boolean compressIntervalTimers
     ) {
@@ -44,6 +46,7 @@ public final class TimelineJsonSerializer {
         this.endKey = checkNotNull(endKey);
         this.countKey = checkNotNull(countKey);
         this.payloadKey = checkNotNull(payloadKey);
+        this.redirectKey = checkNotNull(redirectKey);
         this.compressIntervalIdentifiers = compressIntervalIdentifiers;
         this.compressIntervalTimers = compressIntervalTimers;
     }
@@ -90,6 +93,10 @@ public final class TimelineJsonSerializer {
             if (payload != null) {
                 putSafe(intervalJson, payloadKey, payload);
             }
+            final String redirect = interval.getRedirect();
+            if (redirect != null) {
+                putSafe(intervalJson, redirectKey, redirect);
+            }
             final int count = interval.getCount();
             if (count > 1) {
                 putSafe(intervalJson, countKey, count);
@@ -118,6 +125,7 @@ public final class TimelineJsonSerializer {
         putSafe(meta, "endKey", endKey);
         putSafe(meta, "countKey", countKey);
         putSafe(meta, "payloadKey", payloadKey);
+        putSafe(meta, "redirectKey", redirectKey);
         return meta;
     }
 
