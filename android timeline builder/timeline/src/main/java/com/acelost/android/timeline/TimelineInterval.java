@@ -15,6 +15,7 @@ public final class TimelineInterval {
     private final String name;
     private final String group;
     private final String payload;
+    private final String redirect;
     private final TimeUnit units;
     private final long start;
     private final long end;
@@ -28,6 +29,7 @@ public final class TimelineInterval {
     public TimelineInterval(@NonNull final String name,
                             @Nullable final String group,
                             @Nullable final String payload,
+                            @Nullable final String redirect,
                             @NonNull final TimeUnit units,
                             final long start,
                             final long end,
@@ -35,6 +37,7 @@ public final class TimelineInterval {
         this.name = checkNotEmpty(name);
         this.group = group;
         this.payload = payload;
+        this.redirect = redirect;
         this.units = checkNotNull(units);
         this.start = start;
         this.end = end;
@@ -54,6 +57,11 @@ public final class TimelineInterval {
     @Nullable
     public String getPayload() {
         return payload;
+    }
+
+    @Nullable
+    public String getRedirect() {
+        return redirect;
     }
 
     @NonNull
@@ -93,6 +101,7 @@ public final class TimelineInterval {
         if (getCount() != interval.getCount()) return false;
         if (group != null ? !group.equals(interval.group) : interval.group != null) return false;
         if (payload != null ? !payload.equals(interval.payload) : interval.payload != null) return false;
+        if (redirect != null ? !redirect.equals(interval.redirect) : interval.redirect != null) return false;
         return name.equals(interval.name);
     }
 
@@ -101,6 +110,7 @@ public final class TimelineInterval {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (group != null ? group.hashCode() : 0);
         result = 31 * result + (payload != null ? payload.hashCode() : 0);
+        result = 31 * result + (redirect != null ? redirect.hashCode() : 0);
         result = 31 * result + (int) (getStartMillis() ^ (getStartMillis() >>> 32));
         result = 31 * result + (int) (getEndMillis() ^ (getEndMillis() >>> 32));
         result = 31 * result + count;
@@ -114,6 +124,7 @@ public final class TimelineInterval {
                 "name='" + name + '\'' +
                 ", group=" + group +
                 ", payload=" + payload +
+                ", redirect=" + redirect +
                 ", units=" + units +
                 ", start=" + start +
                 ", end=" + end +
@@ -134,6 +145,9 @@ public final class TimelineInterval {
 
         @Nullable
         private String payload;
+
+        @Nullable
+        private String redirect;
 
         private int count = 1;
 
@@ -158,6 +172,13 @@ public final class TimelineInterval {
 
         @CheckResult
         @NonNull
+        public Builder redirect(@Nullable final String redirect) {
+            this.redirect = redirect;
+            return this;
+        }
+
+        @CheckResult
+        @NonNull
         public Builder count(final int count) {
             this.count = checkIsPositive(count);
             return this;
@@ -165,7 +186,7 @@ public final class TimelineInterval {
 
         @NonNull
         public TimelineInterval build(final long start, final long end) {
-            return new TimelineInterval(name, group, payload, units, start, end, count);
+            return new TimelineInterval(name, group, payload, redirect, units, start, end, count);
         }
 
     }

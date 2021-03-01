@@ -111,6 +111,7 @@ public final class TimelineJsonSerializer {
         putSafe(meta, "title", timeline.getTitle());
         putSafe(meta, "kind", timeline.getKind().name());
         putSafe(meta, "units", "ms");
+        putSafe(meta, "splitSameNamed", timeline.isSplitSameNamed());
         putSafe(meta, "nameKey", nameKey);
         putSafe(meta, "groupKey", groupKey);
         putSafe(meta, "startKey", startKey);

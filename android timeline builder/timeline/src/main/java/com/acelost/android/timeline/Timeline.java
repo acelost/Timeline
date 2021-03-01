@@ -18,14 +18,22 @@ public final class Timeline {
     private final String title;
     private final TimelineKind kind;
     private final List<TimelineInterval> intervals;
+    private final boolean splitSameNamed;
 
     public Timeline(@NonNull final String title) {
         this(title, TimelineKind.ABSOLUTE);
     }
 
     public Timeline(@NonNull final String title, @NonNull final TimelineKind kind) {
+        this(title, kind, false);
+    }
+
+    public Timeline(@NonNull final String title,
+                    @NonNull final TimelineKind kind,
+                    final boolean splitSameNamed) {
         this.title = checkNotEmpty(title);
         this.kind = checkNotNull(kind);
+        this.splitSameNamed = splitSameNamed;
         this.intervals = new CopyOnWriteArrayList<>();
     }
 
@@ -47,6 +55,10 @@ public final class Timeline {
     @NonNull
     public TimelineKind getKind() {
         return kind;
+    }
+
+    public boolean isSplitSameNamed() {
+        return splitSameNamed;
     }
 
     @NonNull

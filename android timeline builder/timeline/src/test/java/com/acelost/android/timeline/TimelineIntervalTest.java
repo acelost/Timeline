@@ -13,22 +13,22 @@ public class TimelineIntervalTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void assert_throwsExceptionIfNameIsNull() {
-        new TimelineInterval(null, null, null, TimeUnit.SECONDS, 0, 0, 1);
+        new TimelineInterval(null, null, null, null, TimeUnit.SECONDS, 0, 0, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void assert_throwsExceptionIfNameIsEmpty() {
-        new TimelineInterval("", null, null, TimeUnit.SECONDS, 0, 0, 1);
+        new TimelineInterval("", null, null, null, TimeUnit.SECONDS, 0, 0, 1);
     }
 
     @Test(expected = NullPointerException.class)
     public void assert_throwsExceptionIfUnitsNotSpecified() {
-        new TimelineInterval("interval", null,null, null, 0, 0, 1);
+        new TimelineInterval("interval", null,null, null, null, 0, 0, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void assert_throwsExceptionIfCountIsNotPositive() {
-        new TimelineInterval("interval", null, null, TimeUnit.SECONDS, 0, 0, 0);
+        new TimelineInterval("interval", null, null, null, TimeUnit.SECONDS, 0, 0, 0);
     }
 
     @Test

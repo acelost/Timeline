@@ -127,7 +127,8 @@ public final class JoinTransformer implements TimelineTransformer {
         final long newEnd = Math.max(i1End, i2End);
         final int newCount = i1.getCount() + i2.getCount();
         final String newPayload = joinStrings(i1.getPayload(), i2.getPayload(), ";");
-        return new TimelineInterval(i1.getName(), i1.getGroup(), newPayload, newUnits, newStart, newEnd, newCount);
+        final String newRedirect = i1.getRedirect();
+        return new TimelineInterval(i1.getName(), i1.getGroup(), newPayload, newRedirect, newUnits, newStart, newEnd, newCount);
     }
 
     private void clearNulls(@NonNull final ArrayList<?> list) {
