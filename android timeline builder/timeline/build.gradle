@@ -5,7 +5,7 @@ publish {
 
     def groupProjectID = 'com.acelost.timeline'
     def artifactProjectID = 'timeline-builder'
-    def publishVersionID = '1.0.0'
+    def publishVersionID = '1.0.1'
 
     userOrg = 'acelost'
     repoName = 'Timeline'
@@ -41,6 +41,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.annotation:annotation:1.1.0'
     testImplementation 'junit:junit:4.12'
 }

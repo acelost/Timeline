@@ -91,7 +91,7 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:1.0.0'
+implementation 'com.acelost.timeline:timeline-builder:1.0.1'
 ```
 
 ## Android Transform API
