@@ -11,17 +11,17 @@ document.addEventListener('DOMContentLoaded', function () {
         handleTimeline(timelineJson);
     } else if (jsonbinio != null) {
         const request = new XMLHttpRequest();
-        const url = 'https://api.jsonbin.io/b/' + jsonbinio;
+        const url = 'https://api.jsonbin.io/v3/b/' + jsonbinio;
         request.open('GET', url);
         request.send();
         request.onreadystatechange = function() {
             if (this.readyState == 4) {
                 if (this.status == 200) {
-                    let timelineJson = JSON.parse(request.responseText);
+                    let timelineJson = JSON.parse(request.responseText)['record'];
                     timelineJson["source"] = sourceString;
                     handleTimeline(timelineJson);
                 } else {
-                    let jsonbinioMessage = JSON.parse(request.responseText)['message'];
+                    let jsonbinioMessage = JSON.parse(request.responseText)['record'];
                     let userMessage = `Failed to load jsonbin ${jsonbinio}. ${jsonbinioMessage}.`;
                     console.log(userMessage);
                     alert(userMessage);
