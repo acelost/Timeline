@@ -1,6 +1,6 @@
 # Timeline
 
-[![Bintray][bintraybadge-svg]][bintray-android-builder]
+![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.acelost/timeline-builder/badge.svg)
 
 `Timeline` is a tool for building and viewing time range charts.
 
@@ -91,7 +91,7 @@ public void shareTimeline(Timeline timeline) {
 For integrating `android timeline builder` just add this dependency to your gradle script:
 
 ```groovy
-implementation 'com.acelost.timeline:timeline-builder:1.0.2'
+implementation 'io.github.acelost:timeline-builder:1.0.3'
 ```
 
 ## Android Transform API
@@ -181,6 +181,3 @@ public Timeline prepare(Timeline timeline) {
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-    
-[bintray-android-builder]: https://bintray.com/acelost/Timeline/timeline-builder
-[bintraybadge-svg]: https://img.shields.io/bintray/v/acelost/Timeline/timeline-builder.svg

@@ -1,29 +1,19 @@
-apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'com.android.library'
 
-publish {
-
-    def groupProjectID = 'com.acelost.timeline'
-    def artifactProjectID = 'timeline-builder'
-    def publishVersionID = '1.0.2'
-
-    userOrg = 'acelost'
-    repoName = 'Timeline'
-    groupId = groupProjectID
-    artifactId = artifactProjectID
-    publishVersion = publishVersionID
-    desc = 'Android library for building timeline for html viewer.'
-    website = 'https://github.com/acelost/Timeline'
-
+ext {
+    PUBLISH_GROUP_ID = acelost_group_id
+    PUBLISH_VERSION = timeline_library_version
+    PUBLISH_ARTIFACT_ID = 'timeline-builder'
 }
 
-android {
-    compileSdkVersion 28
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
 
+android {
+    compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
